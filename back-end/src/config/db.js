@@ -1,8 +1,7 @@
 
 
 const mongoose = require('mongoose');
-require('dotenv/lib/main').config();
-
+require('dotenv').config();
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.CONNECT_DB); // 추가 옵션 제거

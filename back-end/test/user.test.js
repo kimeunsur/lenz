@@ -2,10 +2,12 @@ const request = require('supertest');
 const app = require('../src/app'); // app.js 경로를 정확히 설정
 const mongoose = require('mongoose');
 const User = require('../src/models/User');
-require('dotenv').config(); 
-
+const path = require('path');
+const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.test') });
 // 테스트 DB 연결
 beforeAll(async () => {
+    console.log('CONNECT_DB:', process.env.CONNECT_DB);
     await mongoose.connect(process.env.CONNECT_DB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -14,10 +16,11 @@ beforeAll(async () => {
 
 // 테스트 종료 후 DB 정리
 afterAll(async () => {
-    await mongoose.connection.dropDatabase();
+    if (process.env.CONNECT_DB.includes('testDatabase')) {
+        await mongoose.connection.dropDatabase(); // 테스트용 DB만 삭제
+    }
     await mongoose.connection.close();
 });
-
 describe('User API', () => {
     let token;
     let userId;
