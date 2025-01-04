@@ -2,7 +2,7 @@ const request = require('supertest');
 const mongoose = require('mongoose');
 const app = require('../src/app'); // Express 앱
 const User = require('../src/models/User');
-const { createUser, saveTestData, clearTestData } = require('./setupTests');
+const { saveTestData, clearTestData } = require('./setupTests');
 
 let server;
 
