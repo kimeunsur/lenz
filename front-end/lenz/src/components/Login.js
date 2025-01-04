@@ -3,13 +3,35 @@ import './Login.css';
 import SignupPopup from './SignupPopup';
 
 const Login = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    onLogin(); // 로그인
-  };
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert('로그인 성공');
+            console.log('Token:', data.token); // Token 출력
+            // 로그인 성공 시 JWT 저장 (선택 사항)
+            localStorage.setItem('token', data.token);
+            onLogin(data.token);
+        } else {
+            const errorData = await response.json();
+            alert(`로그인 실패: ${errorData.error}`);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('서버 오류');
+    }
+};
+
 
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const handleSignupOpen = () => setIsSignupOpen(true);
@@ -22,12 +44,13 @@ const Login = ({ onLogin }) => {
         <p>이메일 계정으로 로그인</p>
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label>Email</label>
-            <input
+            <label htmlFor="username">Email</label>
+            <input 
+              id="username"
               type="email"
               placeholder="이메일 주소"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
