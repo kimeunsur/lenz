@@ -1,8 +1,11 @@
-import React, { useStat, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
+import Add from './pages/Add';
+import Favorites from './pages/Favorites';
+import Pin from './pages/Pin';
+import Profile from './pages/Profile';
+import Search from './pages/Search';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
 
@@ -29,6 +32,8 @@ function App() {
     localStorage.setItem('token', jwtToken);
   };
 
+
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setToken(null);
@@ -41,12 +46,17 @@ function App() {
         <Login onLogin={handleLogin} />
       ) : (
         <div className="app-layout">
-          <Sidebar onLogout={handleLogout}/>
+          <Sidebar />
           <div className="page-content">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
+            <Route path="/" element={<Navigate to="/home" />} />
+            
+            <Route path="/home" element={<Home />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/add" element={<Add />} />
+            <Route path="/heart" element={<Favorites />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/pin" element={<Pin onLogout={handleLogout} />} />
             </Routes>
           </div>
         </div>
