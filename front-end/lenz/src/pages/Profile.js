@@ -7,7 +7,7 @@ const Profile = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false); // 프로필 편집 모드
     const [profilePicture, setprofilePicture] = useState(''); // 프로필 사진
     const [name, setName] = useState('');
-
+    const [editName, setEditName] = useState('');
 
     useEffect(() => {
       const fetchProfileData = async () => {
@@ -76,6 +76,7 @@ const Profile = () => {
                 const data = await response.json();
                 setprofilePicture(data.profileImage); // 서버에서 반환된 URL을 저장
                 alert('프로필 사진이 성공적으로 업데이트되었습니다.');
+                setIsPopupOpen(false);
             } else {
                 console.error('프로필 사진 업로드 실패:', await response.text());
                 alert('프로필 사진 업로드에 실패했습니다.');
@@ -87,6 +88,34 @@ const Profile = () => {
 
         }
     }
+
+    const handleUpdateName = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/user/me/name', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name: editName }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setName(data.name);
+          alert('이름이 성공적으로 변경되었습니다.');
+          setIsPopupOpen(false);
+
+        } else {
+          console.error('이름 변경 실패:', await response.text());
+          alert('이름 변경에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('서버 오류:', error);
+        alert('서버 오류가 발생했습니다.');
+      }
+    };
 
     const handlePopupToggle = () => {
         setIsPopupOpen(!isPopupOpen);
@@ -121,6 +150,8 @@ const Profile = () => {
               <button onClick={handlePopupToggle}>프로필 편집</button>
             </div>
           </div>
+
+
           <div className="posts-section">
             <div className="posts-grid">
               {/* 게시물 미리보기 */}
@@ -136,8 +167,11 @@ const Profile = () => {
           {isPopupOpen && (
             <div className="modal-overlay">
               <div className="modal-content">
-                <h2>프로필 사진 변경</h2>
+                <h3>프로필 사진 변경</h3>
                 <input type="file" accept="image/*" onChange={handlePictureChange} />
+                <h3>프로필 이름 변경</h3>
+                <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} />
+                <button onClick={handleUpdateName}>이름 변경</button>
                 <button onClick={handlePopupToggle}>닫기</button>
               </div>
             </div>

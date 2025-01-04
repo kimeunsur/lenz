@@ -13,6 +13,7 @@
     margin-bottom: 20px;
     border-bottom: 1px solid #ddd;
     padding-bottom: 20px;
+    margin-top: 5%;
   }
   
   /* 프로필 사진 */
@@ -26,7 +27,8 @@
     justify-content: center;
     background-color: #f0f0f0;
     border: 1px solid #ddd;
-    margin-right: 30px;
+    margin-right: 10%;
+    margin-left: 5%;
   }
   
   .profile-picture img {

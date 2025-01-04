@@ -73,7 +73,30 @@ router.put(
     }
   );
   
-
+// 이름 변경 라우트
+router.put('/user/me/name', authMiddleware, async (req, res) => {
+    try {
+      const { name } = req.body;
+      if (!name) {
+        return res.status(400).json({ message: '이름이 필요합니다.' });
+      }
+  
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user.id,
+        { name },
+        { new: true }
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+      }
+  
+      res.status(200).json(updatedUser); // name 필드가 포함되어 있는 유저 객체
+    } catch (error) {
+      console.error('이름 변경 오류:', error);
+      res.status(500).json({ message: '서버 오류' });
+    }
+  });
 
 router.put('/user/:id/name', async (req, res) => {
     const { id } = req.params; // URL에서 유저 ID 가져옴
