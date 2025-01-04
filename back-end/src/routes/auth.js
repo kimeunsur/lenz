@@ -14,6 +14,9 @@ router.post('/register', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: '이미 존재하는 유저네임입니다.' });
         }
+        
+        // 비밀번호 암호화
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // 새 유저 생성
         const newUser = new User({ username, password });

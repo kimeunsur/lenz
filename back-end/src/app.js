@@ -6,6 +6,14 @@ const connectDB = require('./config/db');
 const app = express();
 app.use(express.json()); // 요청 바디를 JSON으로 파싱
 
+// CORS 설정
+app.use(cors({
+    origin: 'http://localhost:3001', // 허용할 프론트엔드 URL
+    credentials: true, // 쿠키, 인증 정보를 허용하려면 true로 설정
+}));
+
+
+
 // DB 연결
 connectDB();
 
