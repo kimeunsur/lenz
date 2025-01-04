@@ -80,6 +80,12 @@ router.put('/user/me/name', authMiddleware, async (req, res) => {
       if (!name) {
         return res.status(400).json({ message: '이름이 필요합니다.' });
       }
+
+        // 이미 DB에 해당 이름을 쓰고 있는 유저가 있는지 확인
+        const existingUser = await User.findOne({ name });
+        if (existingUser) {
+        return res.status(409).json({ message: '이미 사용 중인 이름입니다.' });
+        }
   
       const updatedUser = await User.findByIdAndUpdate(
         req.user.id,

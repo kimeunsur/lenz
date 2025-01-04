@@ -106,7 +106,10 @@ const Profile = () => {
           setName(data.name);
           alert('이름이 성공적으로 변경되었습니다.');
           setIsPopupOpen(false);
-
+        } else if (response.status === 409) {
+          // 이미 사용 중인 이름인 경우
+          const errorText = await response.text();
+          alert('중복된 이름입니다. 다른 이름을 사용하세요.');
         } else {
           console.error('이름 변경 실패:', await response.text());
           alert('이름 변경에 실패했습니다.');
@@ -168,10 +171,17 @@ const Profile = () => {
             <div className="modal-overlay">
               <div className="modal-content">
                 <h3>프로필 사진 변경</h3>
-                <input type="file" accept="image/*" onChange={handlePictureChange} />
+                <div className="file-input-wrapper">
+                  <input type="file" id="fileUpload" className='hidden-file-input' accept="image/*" onChange={handlePictureChange} />
+                  <label htmlFor="fileUpload" className="custom-file-label">
+                    사진 찾기
+                  </label>
+                </div>
                 <h3>프로필 이름 변경</h3>
-                <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} />
-                <button onClick={handleUpdateName}>이름 변경</button>
+                <input type="text" className='underline-input' value={editName} onChange={(e) => setEditName(e.target.value)} />
+                <label  onClick={handleUpdateName} className="custom-name-label">
+                  이름 변경
+                </label>                
                 <button onClick={handlePopupToggle}>닫기</button>
               </div>
             </div>

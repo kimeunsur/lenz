@@ -124,14 +124,86 @@
   }
   
   .modal-content button {
-    background-color: black;
-    color: white;
+    display: inline-block;      /* 인라인 블록 또는 블록 등 필요에 맞게 설정 */
+    padding: 8px 16px;         /* 버튼 안 여백 (버튼 크기 결정) */
+    background-color: white;    /* 검정색 배경 */
+    color:  black;               /* 흰색 글씨 */
+    font-size: 14px;           /* 폰트 크기 */
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 4px;        /* 모서리 둥글게 (원하는 대로) */
     cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    margin: 4px 0;             
   }
   
   .modal-content button:hover {
     background-color: gray;
   }
+
+  .underline-input {
+    /* 기본 박스 제거 */
+    border: none;
+    border-radius: 0;
+    outline: none;
+    background: none;
+    
+    /* 아래줄만 얇게 표시 */
+    border-bottom: 1px solid #ccc;
+  
+    /* 애니메이션 (선택사항) */
+    transition: border-color 0.3s ease;
+  }
+  
+  .underline-input:focus {
+    /* 포커스 시, 선 색상 진하게/다른색으로 */
+    border-bottom: 2px solid #666;
+    margin-left: 5%;
+
+  }
+  .hidden-file-input {
+    display: none; 
+    /* 또는 visibility: hidden; 등으로 완전히 숨겨도 됨 */
+  }
+  
+  .custom-file-label {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: black;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    margin-bottom: 5%;
+  }
+
+  .custom-name-label {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: black;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    margin-left: 5%;
+  }
+  /* 호버 시 색상 변화 */
+  .custom-file-label:hover {
+    background-color: black;
+  }
+  
+  /* 클릭(활성) 시 색상 변화 (선택사항) */
+  .custom-file-label:active {
+    background-color: gray;
+  }
+  
+  /* 파일 버튼 자체를 감싸는 래퍼에 스타일을 줄 수도 있음 */
+  .file-input-wrapper {
+    /* 예: 레이아웃이나 배치 조정 */
+    margin: 10px 0;
+  }
+  
