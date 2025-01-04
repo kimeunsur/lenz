@@ -1,4 +1,21 @@
-1. 로그인 체크
+1. 회원가입 (register)
+URL: http://localhost:3000/register
+Method: POST
+Headers:
+{
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "username": "testuser1",
+    "password": "password1",
+}
+// testuser1, testuser2가 존재
+
+testuser1 id: 6778a5f293974ceb70facb13
+testuser2 id: 6778a5f993974ceb70facb16
+
+2. 로그인 체크
 URL: http://localhost:3000/login
 Method: POST
 Headers:
@@ -7,53 +24,24 @@ Headers:
 }
 Body:
 {
-    "username": "testuser",
-    "password": "testpassword"
+    "username": "testuser1",
+    "password": "password1"
 }
 
-2. 좋아요 (like)
+{
+  "token": "받아서 확인하기"
+}
 
-URL: http://localhost:3000/like
-Method: POST
+8. 로그인 이후 내 유저 아이디 가져오기
+URL: http://localhost:3000/profile/me
+Method: GET
 Headers:
 {
-    "Content-Type": "application/json"
-}
-Body:
-{
-    "postId": "63e4b9f1c4a3b5c7e1a2d8f9",
-    "userId": "63e4a8d0c9e77b6b5b0b8a0e"
+    "Authorization": "방금 발행된 토큰"
 }
 
-3. 팔로우 (follow)
-URL: http://localhost:3000/follow
-Method: POST
-Headers:
-{
-    "Content-Type": "application/json"
-}
-Body:
-{
-    "followerId": "63e4a8d0c9e77b6b5b0b8a0e",
-    "followingId": "63e4b9f1c4a3b5c7e1a2d8f9"
-}
-
-4. 글작성 (create post)
-URL: http://localhost:3000/post
-Method: POST
-Headers:
-{
-    "Content-Type": "application/json"
-}
-Body:
-{
-    "userId": "63e4a8d0c9e77b6b5b0b8a0e",
-    "content": "This is a new post",
-    "imageUrl": "http://example.com/image.jpg"
-}
-
-5. 이름변경 (change username)
-URL: http://localhost:3000/user/username
+6. 이름변경 (change username)
+URL: http://localhost:3000/user/:id/username
 Method: PUT
 Headers:
 {
@@ -66,8 +54,9 @@ Body:
     "newUsername": "newtestuser"
 }
 
-6. 프로필사진변경 (change profile picture)
-URL: http://localhost:3000/user/profile-picture
+
+7. 프로필사진변경 (change profile picture)
+URL: http://localhost:3000/user/:id/profile-picture
 Method: PUT
 Headers:
 {
@@ -76,15 +65,55 @@ Headers:
 }
 Body:
 {
-    "userId": "63e4a8d0c9e77b6b5b0b8a0e",
-    "newProfilePictureUrl": "http://example.com/newprofile.jpg"
+    "userId": "id",
+    "profileImage": "https://img.insight.co.kr/static/2017/04/27/700/9J0PWXCECXB779VAK00I.jpg"
 }
 
-7. 로그인 이후 내 유저 아이디 가져오기
-
-URL: http://localhost:3000/profile/me
-Method: GET
+5. 글작성 (create post)
+URL: http://localhost:3000/post
+Method: POST
 Headers:
 {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "userId": "6778a5f293974ceb70facb13",
+    "content": "This is a new post",
+    "imageUrl": "https://img.insight.co.kr/static/2017/04/27/700/9J0PWXCECXB779VAK00I.jpg"
+}
+
+{
+  "message": "글이 성공적으로 작성되었습니다.",
+  "postId": "6778bbfbe3ddc063f9c5a22a"
+}
+
+3. 좋아요 (like)
+URL: http://localhost:3000/like
+Method: POST
+Headers:
+{
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "postId": "67789590b49c6088162e00e1",
+    "userId": "6778a53193974ceb70facb0f"
+}
+{
+  "message": "좋아요가 추가되었습니다."
+}
+
+
+4. 팔로우 (follow)
+URL: http://localhost:3000/follow
+Method: POST
+Headers:
+{
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "followerId": "63e4a8d0c9e77b6b5b0b8a0e",
+    "followingId": "63e4b9f1c4a3b5c7e1a2d8f9"
 }

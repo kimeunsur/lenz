@@ -1,8 +1,10 @@
 const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
+const authMiddleware = require('../middlewares/authMiddleware'); 
 
-router.get('/profile/me', auth, async (req, res) => {
+
+router.get('/profile/me',authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password'); // 비밀번호 제외하고 반환
         res.status(200).json(user);
@@ -36,7 +38,6 @@ router.put('/user/:id/name', async (req, res) => {
         res.status(500).json({ message: 'Error updating name', error });
     }
 });
-
 router.put('/user/:id/profile-picture', async (req, res) => {
     const { id } = req.params;
     const { profileImage } = req.body;
