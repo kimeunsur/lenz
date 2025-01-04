@@ -14,6 +14,7 @@ app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/profile')); 
 app.use('/', require('./routes/interaction'));
 app.use('/', require('./routes/post'));
+//app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // app.js에서는 서버 실행하지 않고, 서버 객체만 내보냄
 module.exports = app;

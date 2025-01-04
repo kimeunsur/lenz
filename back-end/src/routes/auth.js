@@ -9,6 +9,8 @@ router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
 
+        const name = username.split('@')[0];
+
         // 유저네임 중복 확인
         const existingUser = await User.findOne({ username });
         if (existingUser) {
@@ -19,7 +21,7 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // 새 유저 생성
-        const newUser = new User({ username, password });
+        const newUser = new User({ username, password, name });
         await newUser.save();
 
         res.status(201).json({ message: '회원가입 성공' });

@@ -7,6 +7,10 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.get('/profile/me',authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password'); // 비밀번호 제외하고 반환
+        if (!user) {
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+          }
+        
         res.status(200).json(user);
     } catch (err) {
         res.status(500).json({ error: '서버 오류' });
@@ -78,6 +82,8 @@ router.get('/token', (req, res) => {
         res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
     }
 });
+
+
 
 module.exports = router;
 

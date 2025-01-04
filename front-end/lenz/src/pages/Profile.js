@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {FaUser} from 'react-icons/fa';
 
 import './deco/Profile.css';
@@ -6,6 +6,42 @@ import './deco/Profile.css';
 const Profile = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false); // 프로필 편집 모드
     const [profilePicture, setprofilePicture] = useState(''); // 프로필 사진
+    const [name, setName] = useState('');
+
+
+    useEffect(() => {
+      const fetchProfileData = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('토큰이 없습니다.');
+            return;
+          }
+    
+          const response = await fetch('/profile/me', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            console.log('API 응답 데이터:', data);
+            setName(data.name || "no name"); // 사용자 이름 업데이트
+          } else {
+            const errorText = await response.text();
+            console.error('프로필 데이터를 가져오는 데 실패했습니다:', errorText);
+          }
+        } catch (error) {
+          console.error('서버 오류:', error);
+        }
+      };
+    
+      fetchProfileData();
+    }, []);
+    
 
 
     const handlePictureChange = (event) => {
@@ -38,7 +74,7 @@ const Profile = () => {
               )}
             </div>
             <div className="profile-info">
-              <h1>eunsur11</h1>
+              <h1>{name}</h1>
               <div className="stats">
                 <span>
                   <strong>12</strong> 게시물
