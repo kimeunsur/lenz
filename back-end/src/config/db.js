@@ -1,10 +1,13 @@
-
-
 const mongoose = require('mongoose');
 require('dotenv').config();
+
+// 기본 연결 문자열을 .env에서 가져옴
+const dbURI = process.env.NODE_ENV === 'test' ? process.env.CONNECT_DB_TEST : process.env.CONNECT_DB;
+
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.CONNECT_DB); // 추가 옵션 제거
+    console.log('연결할 DB URI:', process.env.CONNECT_DB_TEST);
+    await mongoose.connect(process.env.CONNECT_DB_TEST); // dbURI 사용
     console.log('MongoDB 연결 성공');
   } catch (error) {
     console.error('MongoDB 연결 실패:', error.message);

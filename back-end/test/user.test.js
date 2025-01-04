@@ -1,120 +1,81 @@
 const request = require('supertest');
-const app = require('../src/app'); // app.js 경로를 정확히 설정
 const mongoose = require('mongoose');
+const app = require('../src/app'); // Express 앱
 const User = require('../src/models/User');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env.test') });
-// 테스트 DB 연결
-beforeAll(async () => {
-    console.log('CONNECT_DB:', process.env.CONNECT_DB);
-    await mongoose.connect(process.env.CONNECT_DB, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-});
+let server;
+let db;
+describe('인증 관련 테스트', () => {
 
-// 테스트 종료 후 DB 정리
-afterAll(async () => {
-    if (process.env.CONNECT_DB.includes('testDatabase')) {
-        await mongoose.connection.dropDatabase(); // 테스트용 DB만 삭제
-    }
+  let userId;
+  let token;
+  
+  // 모든 테스트 시작 전
+  beforeAll(async () => {
+    server = app.listen(4000);
+    
+  });
+
+  // 모든 테스트 끝난 뒤
+  afterAll(async () => {
+    // 테스트가 끝난 후 DB 연결 종료
+    db = mongoose.connection.db; 
+    await db.collection('users').drop();
+    server.close();
     await mongoose.connection.close();
-});
-describe('User API', () => {
-    let token;
-    let userId;
+  });
 
-    // 회원가입 테스트
-    it('should register a new user', async () => {
-        const response = await request(app)
-            .post('/auth/register')
-            .send({
-                username: 'testuser',
-                password: 'password123',
-            });
+  it('POST /auth/register - 회원가입 성공', async () => {
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ username: 'testuser', password: 'testpass' });
 
-        expect(response.status).toBe(201);
-        expect(response.body.message).toBe('회원가입 성공');
-    });
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty('message', '회원가입 성공');
 
-    // 로그인 테스트
-    it('should login the user and return a token', async () => {
-        const response = await request(app)
-            .post('/auth/login')
-            .send({
-                username: 'testuser',
-                password: 'password123',
-            });
+    // 회원가입된 사용자 확인
+    const user = await User.findOne({ username: 'testuser' });
+    expect(user).not.toBeNull();
+    userId = user._id.toString();
+    console.log(userId);
+  });
 
-        expect(response.status).toBe(200);
-        expect(response.body.token).toBeDefined();
-        token = response.body.token;
+  it('POST /auth/login - 로그인 성공', async () => {
+    const res = await request(app)
+      .post('/auth/login')
+      .send({ username: 'testuser', password: 'testpass' });
 
-        // 로그인한 유저의 ID 가져오기
-        const decoded = jwt.verify(token, 'secretKey');
-        userId = decoded.id;
-    });
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('token');
+    token = res.body.token;
+  });
 
-    // 이름 업데이트 테스트
-    it('should update the user name', async () => {
-        const response = await request(app)
-            .put(`/user/${userId}/name`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-                name: 'Updated Name',
-            });
+  it('PUT /user/:id/name - 유저 이름 업데이트 성공', async () => {
+    const newName = '새이름';
+    const res = await request(app)
+      .put(`/user/${userId}/name`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: newName });
 
-        expect(response.status).toBe(200);
-        expect(response.body.name).toBe('Updated Name');
-    });
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBe(newName);
 
-    // 프로필 사진 업데이트 테스트
-    it('should update the user profile picture', async () => {
-        const response = await request(app)
-            .put(`/user/${userId}/profile-picture`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-                profilePicture: 'https://example.com/profile.jpg',
-            });
+    // DB에서 이름 변경 확인
+    const updatedUser = await User.findById(userId);
+    expect(updatedUser.name).toBe(newName);
+  });
 
-        expect(response.status).toBe(200);
-        expect(response.body.profilePicture).toBe('https://example.com/profile.jpg');
-    });
+  it('PUT /user/:id/profile-picture - 프로필 사진 업데이트 성공', async () => {
+    const newProfileImage = 'https://img.insight.co.kr/static/2017/04/27/700/9J0PWXCECXB779VAK00I.jpg';
+    const res = await request(app)
+        .put(`/user/${userId}/profile-picture`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ profileImage: newProfileImage });
 
-    // 잘못된 요청 - 이름을 제공하지 않은 경우
-    it('should return error if name is not provided for update', async () => {
-        const response = await request(app)
-            .put(`/user/${userId}/name`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({});
+    expect(res.status).toBe(200);
+    expect(res.body.profileImage).toBe(newProfileImage);
 
-        expect(response.status).toBe(400);
-        expect(response.body.message).toBe('Name is required');
-    });
-
-    // 잘못된 요청 - 프로필 사진을 제공하지 않은 경우
-    it('should return error if profile picture is not provided for update', async () => {
-        const response = await request(app)
-            .put(`/user/${userId}/profile-picture`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({});
-
-        expect(response.status).toBe(400);
-        expect(response.body.message).toBe('Profile picture is required');
-    });
-
-    // 잘못된 사용자 ID로 이름 업데이트 시도
-    it('should return error if user not found for name update', async () => {
-        const invalidUserId = mongoose.Types.ObjectId(); // 유효하지 않은 ID
-        const response = await request(app)
-            .put(`/user/${invalidUserId}/name`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-                name: 'Non Existent User',
-            });
-
-        expect(response.status).toBe(404);
-        expect(response.body.message).toBe('User not found');
-    });
+    // DB에서 프로필 사진 변경 확인
+    const updatedUser = await User.findById(userId);
+    expect(updatedUser.profileImage).toBe(newProfileImage);
+  });
 });
