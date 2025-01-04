@@ -8,11 +8,20 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
+
+        // 유저네임 중복 확인
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ error: '이미 존재하는 유저네임입니다.' });
+        }
+
+        // 새 유저 생성
         const newUser = new User({ username, password });
         await newUser.save();
+
         res.status(201).json({ message: '회원가입 성공' });
     } catch (err) {
-        res.status(400).json({ error: '회원가입 실패' });
+        res.status(500).json({ error: '서버 에러로 회원가입 실패' });
     }
 });
 

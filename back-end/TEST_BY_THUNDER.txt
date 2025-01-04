@@ -1,0 +1,90 @@
+1. 로그인 체크
+URL: http://localhost:3000/login
+Method: POST
+Headers:
+{
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "username": "testuser",
+    "password": "testpassword"
+}
+
+2. 좋아요 (like)
+
+URL: http://localhost:3000/like
+Method: POST
+Headers:
+{
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "postId": "63e4b9f1c4a3b5c7e1a2d8f9",
+    "userId": "63e4a8d0c9e77b6b5b0b8a0e"
+}
+
+3. 팔로우 (follow)
+URL: http://localhost:3000/follow
+Method: POST
+Headers:
+{
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "followerId": "63e4a8d0c9e77b6b5b0b8a0e",
+    "followingId": "63e4b9f1c4a3b5c7e1a2d8f9"
+}
+
+4. 글작성 (create post)
+URL: http://localhost:3000/post
+Method: POST
+Headers:
+{
+    "Content-Type": "application/json"
+}
+Body:
+{
+    "userId": "63e4a8d0c9e77b6b5b0b8a0e",
+    "content": "This is a new post",
+    "imageUrl": "http://example.com/image.jpg"
+}
+
+5. 이름변경 (change username)
+URL: http://localhost:3000/user/username
+Method: PUT
+Headers:
+{
+    "Content-Type": "application/json"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+Body:
+{
+    "userId": "63e4a8d0c9e77b6b5b0b8a0e",
+    "newUsername": "newtestuser"
+}
+
+6. 프로필사진변경 (change profile picture)
+URL: http://localhost:3000/user/profile-picture
+Method: PUT
+Headers:
+{
+    "Content-Type": "application/json"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+Body:
+{
+    "userId": "63e4a8d0c9e77b6b5b0b8a0e",
+    "newProfilePictureUrl": "http://example.com/newprofile.jpg"
+}
+
+7. 로그인 이후 내 유저 아이디 가져오기
+
+URL: http://localhost:3000/profile/me
+Method: GET
+Headers:
+{
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}

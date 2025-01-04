@@ -24,9 +24,9 @@ describe('인증 관련 테스트', () => {
     await mongoose.connection.close();
   });
 
-  it('POST /auth/register - 회원가입 성공', async () => {
+  it('POST /register - 회원가입 성공', async () => {
     const res = await request(app)
-      .post('/auth/register')
+      .post('/register')
       .send({ username: 'testuser', password: 'testpass' });
 
     expect(res.status).toBe(201);
@@ -39,9 +39,9 @@ describe('인증 관련 테스트', () => {
     console.log(userId);
   });
 
-  it('POST /auth/login - 로그인 성공', async () => {
+  it('POST /login - 로그인 성공', async () => {
     const res = await request(app)
-      .post('/auth/login')
+      .post('/login')
       .send({ username: 'testuser', password: 'testpass' });
 
     expect(res.status).toBe(200);
