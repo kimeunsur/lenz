@@ -13,10 +13,6 @@ const Profile = () => {
       const fetchProfileData = async () => {
         try {
           const token = localStorage.getItem('token');
-          if (!token) {
-            console.error('토큰이 없습니다.');
-            return;
-          }
     
           const response = await fetch('/profile/me', {
             method: 'GET',
@@ -30,6 +26,13 @@ const Profile = () => {
             const data = await response.json();
             console.log('API 응답 데이터:', data);
             setName(data.name || "no name"); // 사용자 이름 업데이트
+
+            //데이터에 프로필 사진 있으면 업로드
+            if (data.profileImage) {
+              setprofilePicture(data.profileImage);
+            } else {
+              setprofilePicture(''); 
+            }
           } else {
             const errorText = await response.text();
             console.error('프로필 데이터를 가져오는 데 실패했습니다:', errorText);
@@ -44,15 +47,44 @@ const Profile = () => {
     
 
 
-    const handlePictureChange = (event) => {
+    const handlePictureChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
+          //사진 미리보기
             const reader = new FileReader();
             reader.onload = (e) => {
                 setprofilePicture(e.target.result);
                 setIsPopupOpen(false);
             };
             reader.readAsDataURL(file); // 파일을 url 형식으로 변환
+
+            //서버로 전송
+            const formData = new FormData();
+            formData.append('profileImage', file);
+
+            try {
+              const token = localStorage.getItem('token'); // 토큰 가져오기
+              const response = await fetch('/user/me/profile-picture', {
+                  method: 'PUT',
+                  headers: {
+                      Authorization: `Bearer ${token}`, // 인증 헤더 추가
+                  },
+                  body: formData, // FormData 전송
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                setprofilePicture(data.profileImage); // 서버에서 반환된 URL을 저장
+                alert('프로필 사진이 성공적으로 업데이트되었습니다.');
+            } else {
+                console.error('프로필 사진 업로드 실패:', await response.text());
+                alert('프로필 사진 업로드에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('서버 오류:', error);
+            alert('서버 오류가 발생했습니다.');
+        }
+
         }
     }
 
