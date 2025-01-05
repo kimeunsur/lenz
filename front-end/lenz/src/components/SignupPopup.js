@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './SignupPopup.css';
 
 const SignupPopup = ({ onClose }) => {
-  const [username, setUsername] = useState('');
+  const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
@@ -13,7 +13,7 @@ const SignupPopup = ({ onClose }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({email, password }),
       });
 
       if (response.ok) {
@@ -35,12 +35,12 @@ const SignupPopup = ({ onClose }) => {
         <h2>Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Email Address</label>
+            <label htmlFor="email">Email Address</label>
             <input
-              id="username"
+              id="email"
               type="email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setemail(e.target.value)}
               required
             />
           </div>

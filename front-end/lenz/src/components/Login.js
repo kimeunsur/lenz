@@ -3,7 +3,7 @@ import './Login.css';
 import SignupPopup from './SignupPopup';
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
+  const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async (e) => {
@@ -12,7 +12,7 @@ const Login = ({ onLogin }) => {
         const response = await fetch('/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ email, password }),
         });
 
         if (response.ok) {
@@ -44,13 +44,13 @@ const Login = ({ onLogin }) => {
         <p>이메일 계정으로 로그인</p>
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label htmlFor="username">Email</label>
+            <label htmlFor="email">Email</label>
             <input 
-              id="username"
+              id="email"
               type="email"
               placeholder="이메일 주소"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setemail(e.target.value)}
               required
             />
           </div>
