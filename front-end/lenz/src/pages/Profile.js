@@ -15,6 +15,8 @@ const Profile = () => {
   const [following, setFollowing] = useState([]); // 팔로잉 목록
   const [showFollowers, setShowFollowers] = useState(false); // 팔로워 팝업 상태
   const [showFollowing, setShowFollowing] = useState(false); // 팔로잉 팝업 상태
+  const [selectedPost, setSelectedPost] = useState(null); // 선택한 게시물
+  const [selectedPopupOpen, setSelectedPopupOpen] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -132,6 +134,18 @@ const Profile = () => {
     }
   };
 
+  // 사진 클릭 핸들러
+  const handlePhotoClick = (post) => {
+    setSelectedPost(post); // 선택한 게시물을 저장
+    setSelectedPopupOpen(true); // 팝업 열기
+  };
+
+  // 팝업 닫기 핸들러
+  const handleClosePopup = () => {
+    setSelectedPost(null); // 선택된 게시물 초기화
+    setSelectedPopupOpen(false); // 사진 팝업만 닫기
+  };
+
   const handlePopupToggle = () => {
     setIsPopupOpen(!isPopupOpen);
   };
@@ -169,7 +183,9 @@ const Profile = () => {
       <div className="posts-section">
         <div className="posts-grid">
           {posts.map((post) => (
-            <div key={post._id} className="post-placeholder">
+            <div key={post._id} 
+            onClick={() => handlePhotoClick(post)} // 사진 클릭 핸들러 연결
+            className="post-placeholder">
               {post.image ? (
                 <img src={post.image} alt="Post" style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
               ) : (
@@ -247,6 +263,26 @@ const Profile = () => {
           </div>
         </div>
       )}
+
+      {/* 팝업 창 */}
+      {/* 사진 클릭 팝업 */}
+      {selectedPopupOpen && selectedPost && (
+        <div className="post-popup-overlay" onClick={handleClosePopup}>
+          <div className="post-popup">
+            {selectedPost.image && (
+              <img
+                src={selectedPost.image}
+                alt="Selected Post"
+                className="post-popup-image"
+              />
+            )}
+            <p>{selectedPost.content}</p>
+            <button onClick={handleClosePopup}>닫기</button>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 };
