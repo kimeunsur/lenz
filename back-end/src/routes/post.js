@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const Follow = require('../models/Follow'); // Follow 모델 가져오기
 const sharp = require('sharp');
 
+
 // 글 작성 Route
 router.post('/post/me', async (req, res) => {
     try {
@@ -14,7 +15,7 @@ router.post('/post/me', async (req, res) => {
         if (!token) {
             return res.status(401).json({ error: '토큰이 없습니다.' });
         }
-
+  
         // 토큰 검증 및 userId 추출
         const decoded = jwt.verify(token, 'secretKey');
         const userId = decoded.id;
