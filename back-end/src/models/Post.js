@@ -6,6 +6,6 @@ const postSchema = new mongoose.Schema({
     image: { type: String, default: '' }, // 글에 첨부된 이미지
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // 좋아요한 유저 ID 목록
     createdAt: { type: Date, default: Date.now }
-});
+}); //지워주세용
 
 module.exports = mongoose.model('Post', postSchema);
