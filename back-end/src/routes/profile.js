@@ -33,16 +33,14 @@ router.get('/profile/me',authMiddleware, async (req, res) => {
         
         res.status(200).json(user);
     } catch (err) {
-        res.status(500).json({ error: '서버 오류' });
+      console.error(err);
+      res.status(500).json({ error: '서버 오류' });
     }
 });
 
 
 // 프로필 사진 업로드 엔드포인트
-router.put(
-    '/user/me/profile-picture',
-    authMiddleware, 
-    upload.single('profileImage'), // input[type="file"]의 name 값이 'profileImage'여야 함
+router.put('/user/me/profile-picture', authMiddleware, upload.single('profileImage'), // input[type="file"]의 name 값이 'profileImage'여야 함
     async (req, res) => {
       try {
         if (!req.file) {
@@ -67,12 +65,11 @@ router.put(
         // 성공 시, 업데이트된 유저의 profileImage(URL) 반환
         res.status(200).json({ profileImage: updatedUser.profileImage });
       } catch (error) {
-        console.error('프로필 사진 업데이트 중 오류 발생:', error);
+        console.error(err);
         res.status(500).json({ message: '프로필 사진 업데이트 중 오류가 발생했습니다.' });
       }
     }
   );
-  
 // 이름 변경 라우트
 router.put('/user/me/name', authMiddleware, async (req, res) => {
     try {
@@ -99,7 +96,7 @@ router.put('/user/me/name', authMiddleware, async (req, res) => {
   
       res.status(200).json(updatedUser); // name 필드가 포함되어 있는 유저 객체
     } catch (error) {
-      console.error('이름 변경 오류:', error);
+      console.error(err);
       res.status(500).json({ message: '서버 오류' });
     }
   });
@@ -126,6 +123,7 @@ router.put('/user/:id/name', async (req, res) => {
 
         res.status(200).json(updatedUser); // 업데이트 결과 반환
     } catch (error) {
+        console.error(err);
         res.status(500).json({ message: 'Error updating name', error });
     }
 });
@@ -151,7 +149,8 @@ router.put('/user/:id/profile-picture', async (req, res) => {
         // profileImage만 반환
         res.status(200).json({ profileImage: updatedUser.profileImage });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating profile picture', error });
+      console.error(err);
+      res.status(500).json({ message: 'Error updating profile picture', error });
     }
 });
 
@@ -166,7 +165,8 @@ router.get('/token', (req, res) => {
         const decoded = jwt.verify(token, 'secretKey'); // 'secretKey'는 JWT 생성 시 사용한 키
         res.status(200).json({ id: decoded.id, message: '토큰이 유효합니다.' });
     } catch (err) {
-        res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
+      console.error(err);
+      res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
     }
 });
 
