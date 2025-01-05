@@ -101,6 +101,25 @@ test('유저2가 유저1의 글 작성 수 확인', async () => {
     expect(res.body).toHaveProperty('message', '팔로우 성공!');
   });
 
+  test('키워드로 유저 검색 - "user"로 검색 시 유저1과 유저2 반환', async () => {
+    const res = await request(app)
+      .get('/search?keyword=user&page=1')
+      .set('Authorization', `Bearer ${token1}`); // 유저1 인증
+  
+    console.log('Expected output: 유저1과 유저2 반환, status=200');
+    expect(res.status).toBe(200); // 상태 코드 확인
+    expect(res.body.users).toBeInstanceOf(Array); // 결과는 배열이어야 함
+    expect(res.body.users.length).toBe(2); // 유저1, 유저2 두 명만 반환되어야 함
+  
+    // 유저1과 유저2의 이메일 및 이름 확인
+    const userEmails = res.body.users.map(user => user.email);
+    expect(userEmails).toContain('user1@a.com');
+    expect(userEmails).toContain('user2@a.com');
+  
+    const userNames = res.body.users.map(user => user.name);
+    expect(userNames).toContain(''); // 초기 이름은 빈 문자열일 것으로 예상
+  });
+  
   test('유저2가 팔로우한 유저의 게시물 확인', async () => {
     const res = await request(app)
         .get('/post/following')
