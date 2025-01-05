@@ -1,45 +1,89 @@
-  /* 파일 버튼 자체를 감싸는 래퍼에 스타일을 줄 수도 있음 */
-  .file-input-wrapper {
-    /* 예: 레이아웃이나 배치 조정 */
-    margin: 10px 0;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100vh; 
-    display: flex;
-  }
-  .hidden-file-input {
-    display: none; 
-    /* 또는 visibility: hidden; 등으로 완전히 숨겨도 됨 */
-  }
-  
-  .custom-file-label {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: black;
-    color: #fff;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s ease;
-    text-align: center;
-    margin-bottom: 5%;
+/* Popup Container */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+}
+
+/* Title */
+.popup h2 {
+  margin: 0 0 20px;
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+}
+
+/* Textarea */
+.popup textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+/* File Input */
+.popup input[type="file"] {
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* Image Preview */
+.preview {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.preview img {
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Submit Button */
+.popup button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #007BFF;
+  color: #fff;
+  font-size: 18px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .popup {
+    padding: 15px;
   }
 
+  .popup h2 {
+    font-size: 20px;
+  }
 
-.preview-wrapper {
-    width: 200px;
-    height: 200px;
-    overflow: hidden; /* 혹시 큰 이미지를 잘라내고 싶다면 사용 */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .popup textarea {
+    height: 80px;
   }
-  
-  .preview-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
+
+  .popup button {
+    font-size: 16px;
   }
+}

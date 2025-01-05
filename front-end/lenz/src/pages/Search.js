@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/Sidebar'; // 기존 Sidebar 사용
 import './deco/Search.css';
 
 function SearchUser() {
@@ -51,8 +50,6 @@ function SearchUser() {
 
   return (
     <div className="container">
-      <Sidebar /> {/* Sidebar 유지 */}
-
       <div className="content">
         <div className="search-bar">
           <input

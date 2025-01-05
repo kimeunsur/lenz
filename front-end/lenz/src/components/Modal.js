@@ -15,9 +15,6 @@ function Modal({ children }) {
         className="modal-content"
         onClick={(e) => e.stopPropagation()} // 내부 클릭 시 닫히지 않음
       >
-        <button className="modal-close" onClick={handleClose}>
-          닫기
-        </button>
         {children}
       </div>
     </div>

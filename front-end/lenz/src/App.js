@@ -87,17 +87,10 @@ function AppRoutes({ isLoggedIn, handleLogin, handleLogout }) {
         </div>
       </div>
 
-      {/* 2) background가 존재한다면 모달로 Add를 중첩 렌더링 */}
       {background && (
         <Routes>
-          <Route
-            path="/add"
-            element={
-              <Modal>
-                <Add />
-              </Modal>
-            }
-          />
+          <Route path="/pin" element={<Pin onLogout={handleLogout} />} />
+          <Route path="/add" element={ <Add /> }/>
         </Routes>
       )}
     </>

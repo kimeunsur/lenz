@@ -20,7 +20,7 @@ const Sidebar = () => {
     //{ id: 'add', icon: <IoMdAdd />, label: 'Add' },
     { id: 'heart', icon: <FiHeart />, label: 'Favorites' },
     { id: 'profile', icon: <CgProfile />, label: 'Profile' },
-    { id: 'pin', icon: <BsPin />, label: 'Pin' },
+    //{ id: 'pin', icon: <BsPin />, label: 'Pin' },
   ];
 
   return (
@@ -38,17 +38,28 @@ const Sidebar = () => {
           <span className="label">{tab.label}</span>
         </div>
       ))}
-<div
+      <div
         className={`tab ${activeTab === 'add' ? 'active' : ''}`}
         onClick={() => {
-          // Add를 위한 background location 설정
           navigate('/add', { state: { background: location } });
         }}
       >
         <div className="icon">
           <IoMdAdd />
-        </div>
+        </div>  
         <span className="label">Add</span>
+      </div>
+      
+      <div
+        className={`tab ${activeTab === 'pin' ? 'active' : ''}`}
+        onClick={() => {
+          navigate('/pin', { state: { background: location } });
+        }}
+      >
+        <div className="icon">
+          <BsPin />
+        </div>  
+        <span className="label">Pin</span>
       </div>
     </div>  );
 };

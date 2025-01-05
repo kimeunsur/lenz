@@ -1,51 +1,79 @@
 /* Sidebar.css */
+
 .sidebar {
     position: fixed;
-    left: 0;
     top: 0;
+    left: 0;
     height: 100vh;
     width: 80px;
-    background-color: #fff;
+    background-color: black;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.tab {
-    margin: 20px 0;
-    width: 70px;
-    height: 70px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .sidebar:hover {
+    width: 200px;
+  }
+  
+  .tab {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 15px 0;
+    color: #ecf0f1;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.tab .icon {
-    font-size: 24px;
-    color: #888;
-}
-
-.tab .label {
-    margin-top: 5px;
-    font-size: 12px;
-    color: #888;
-}
-
-.tab.active .icon {
-    color: #000;
-}
-
-.tab.active .label {
-    font-weight: bold;
-    color: #000;
-}
-
-.tab:hover {
-    background-color: #f0f0f0;
-    border-radius: 10px;
-}
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .tab:hover {
+    background-color: #2d3034;
+  }
+  
+  .tab.active {
+    background-color: white;
+    color: black;
+  }
+  
+  .icon {
+    font-size: 28px;
+    margin-bottom: 5px;
+  }
+  
+  .label {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-20px);
+  }
+  
+  .sidebar:hover .label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 60px;
+    }
+  
+    .sidebar:hover {
+      width: 150px;
+    }
+  
+    .icon {
+      font-size: 24px;
+    }
+  
+    .label {
+      font-size: 12px;
+    }
+  }
+  
