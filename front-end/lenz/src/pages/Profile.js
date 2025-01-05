@@ -8,13 +8,20 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [editName, setEditName] = useState('');
   const [posts, setPosts] = useState([]);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followers, setFollowers] = useState([]); // 팔로워 목록
+  const [following, setFollowing] = useState([]); // 팔로잉 목록
+  const [showFollowers, setShowFollowers] = useState(false); // 팔로워 팝업 상태
+  const [showFollowing, setShowFollowing] = useState(false); // 팔로잉 팝업 상태
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('/profile/me', {
+        // 프로필 데이터 가져오기
+        const profileResponse = await fetch('/profile/me', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -22,51 +29,64 @@ const Profile = () => {
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log('API 응답 데이터:', data);
-          setName(data.name || 'no name'); // 사용자 이름 업데이트
-
-          if (data.profileImage) {
-            setProfilePicture(data.profileImage);
-          } else {
-            setProfilePicture('');
-          }
+        if (profileResponse.ok) {
+          const data = await profileResponse.json();
+          setName(data.name || 'no name');
+          setProfilePicture(data.profileImage || '');
         } else {
-          const errorText = await response.text();
-          console.error('프로필 데이터를 가져오는 데 실패했습니다:', errorText);
+          console.error('프로필 데이터를 가져오는 데 실패했습니다:', await profileResponse.text());
+        }
+
+        // 게시물 데이터 가져오기
+        const postsResponse = await fetch('/posts', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (postsResponse.ok) {
+          const postData = await postsResponse.json();
+          setPosts(postData.posts || []);
+        } else {
+          console.error('Post 데이터를 가져오는 데 실패했습니다:', await postsResponse.text());
+        }
+
+        // 팔로워 데이터 가져오기
+        const followersResponse = await fetch('/user/me/followers', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (followersResponse.ok) {
+          const followersData = await followersResponse.json();
+          setFollowers(followersData.followers || []);
+          setFollowerCount(followersData.followers.length || 0);
+        }
+
+        // 팔로잉 데이터 가져오기
+        const followingResponse = await fetch('/user/me/following', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (followingResponse.ok) {
+          const followingData = await followingResponse.json();
+          setFollowing(followingData.following || []);
+          setFollowingCount(followingData.following.length || 0);
         }
       } catch (error) {
         console.error('서버 오류:', error);
       }
     };
 
-    const fetchPosts = async () => {
-      try {
-        const token = localStorage.getItem('token'); // JWT 토큰 가져오기
-
-        const response = await fetch('/posts', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`, // 인증 헤더 추가
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Post 데이터를 가져오지 못했습니다.');
-        }
-
-        const data = await response.json();
-        setPosts(data.posts); // Post 데이터를 상태에 저장
-      } catch (error) {
-        console.error('Post 가져오기 실패:', error.message);
-        //alert('Post 데이터를 가져오는 중 문제가 발생했습니다.');
-      }
-    };
-
     fetchProfileData();
-    fetchPosts();
   }, []);
 
   const handlePictureChange = async (event) => {
@@ -78,27 +98,26 @@ const Profile = () => {
         setProfilePicture(e.target.result);
         setIsPopupOpen(false);
       };
-      reader.readAsDataURL(file); // 파일을 URL 형식으로 변환
+      reader.readAsDataURL(file);
 
       // 서버로 전송
       const formData = new FormData();
       formData.append('profileImage', file);
 
       try {
-        const token = localStorage.getItem('token'); // 토큰 가져오기
+        const token = localStorage.getItem('token');
         const response = await fetch('/user/me/profile-picture', {
           method: 'PUT',
           headers: {
-            Authorization: `Bearer ${token}`, // 인증 헤더 추가
+            Authorization: `Bearer ${token}`,
           },
-          body: formData, // FormData 전송
+          body: formData,
         });
 
         if (response.ok) {
           const data = await response.json();
-          setProfilePicture(data.profileImage); // 서버에서 반환된 URL을 저장
+          setProfilePicture(data.profileImage);
           alert('프로필 사진이 성공적으로 업데이트되었습니다.');
-          setIsPopupOpen(false);
         } else {
           console.error('프로필 사진 업로드 실패:', await response.text());
           alert('프로필 사진 업로드에 실패했습니다.');
@@ -145,7 +164,6 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      {/* 프로필 보기 */}
       <div className="profile-header">
         <div className="profile-picture">
           {profilePicture ? (
@@ -159,14 +177,14 @@ const Profile = () => {
         <div className="profile-info">
           <h1>{name}</h1>
           <div className="stats">
+            <span onClick={() => setShowFollowers(true)} style={{ cursor: 'pointer' }}>
+              <strong>{followerCount}</strong> 팔로워
+            </span>
+            <span onClick={() => setShowFollowing(true)} style={{ cursor: 'pointer' }}>
+              <strong>{followingCount}</strong> 팔로잉
+            </span>
             <span>
               <strong>{posts.length}</strong> 게시물
-            </span>
-            <span>
-              <strong>340</strong> 팔로워
-            </span>
-            <span>
-              <strong>180</strong> 팔로잉
             </span>
           </div>
           <button onClick={handlePopupToggle}>프로필 편집</button>
@@ -179,11 +197,7 @@ const Profile = () => {
           {posts.map((post) => (
             <div key={post._id} className="post-placeholder">
               {post.image ? (
-                <img
-                  src={post.image}
-                  alt="Post"
-                  style={{ width: '100%', height: '150px', objectFit: 'cover' }}
-                />
+                <img src={post.image} alt="Post" style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
               ) : (
                 <p>{post.content}</p>
               )}
@@ -191,6 +205,42 @@ const Profile = () => {
           ))}
         </div>
       </div>
+
+      {/* 팔로워 팝업 */}
+      {showFollowers && (
+        <div>
+          <div className="overlay" onClick={() => setShowFollowers(false)}></div>
+          <div className="popup">
+            <h2>팔로워</h2>
+            <ul>
+              {followers.map((id, index) => (
+                <li key={index}>
+                  <span>{id}</span>
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => setShowFollowers(false)}>닫기</button>
+          </div>
+        </div>
+      )}
+
+      {/* 팔로잉 팝업 */}
+      {showFollowing && (
+        <div>
+          <div className="overlay" onClick={() => setShowFollowing(false)}></div>
+          <div className="popup">
+            <h2>팔로잉</h2>
+            <ul>
+              {following.map((id, index) => (
+                <li key={index}>
+                  <span>{id}</span>
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => setShowFollowing(false)}>닫기</button>
+          </div>
+        </div>
+      )}
 
       {/* 프로필 편집 모달 */}
       {isPopupOpen && (
