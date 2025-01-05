@@ -58,4 +58,26 @@ router.post('/post', async (req, res) => {
     }
 });
 
+
+// 모든 게시물 가져오기
+router.get('/post', async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ error: '토큰이 없습니다.' });
+        }
+
+        const decoded = jwt.verify(token, 'secretKey');
+        const userId = decoded.id; // 토큰에서 추출된 userId
+
+        // 사용자의 게시물 불러오기 (최신순 정렬)
+        const posts = await Post.find({ userId }).sort({ createdAt: -1 });
+
+        res.status(200).json({ posts });
+    } catch (err) {
+        console.error('게시물 가져오기 오류:', err);
+        res.status(500).json({ error: '서버 오류' });
+    }
+});
+
 module.exports = router;

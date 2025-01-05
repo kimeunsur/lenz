@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 import './deco/Profile.css';
+import './Profile.css';
 
 const Profile = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false); // 프로필 편집 모드
@@ -38,7 +39,7 @@ const Profile = () => {
         }
 
         // 게시물 데이터 가져오기
-        const postsResponse = await fetch('/posts', {
+        const postsResponse = await fetch('/post', {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
