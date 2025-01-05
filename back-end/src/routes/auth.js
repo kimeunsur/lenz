@@ -17,6 +17,7 @@ router.post('/register', async (req, res) => {
 
         // 새 유저 생성
         const newUser = new User({ email, password });
+
         await newUser.save();
 
         res.status(201).json({ message: '회원가입 성공' });

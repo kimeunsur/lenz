@@ -7,9 +7,12 @@ import { FiHeart } from 'react-icons/fi';
 import { CgProfile } from 'react-icons/cg';
 import { BsPin } from 'react-icons/bs';
 import './Sidebar.css';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
-  const [activeTab, setActiveTab] = useState('home');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.pathname.replace('/', ''));
+  const navigate = useNavigate();
 
   const tabs = [
     { id: 'home', icon: <FaHome />, label: 'Home' },
@@ -26,7 +29,10 @@ const Sidebar = () => {
         <div
           key={tab.id}
           className={`tab ${activeTab === tab.id ? 'active' : ''}`}
-          onClick={() => setActiveTab(tab.id)}
+          onClick={() => {
+            setActiveTab(tab.id);
+            navigate(tab.id);
+          }}
         >
           <div className="icon">{tab.icon}</div>
           <span className="label">{tab.label}</span>
