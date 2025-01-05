@@ -15,7 +15,7 @@ function Add() {
       reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
     });
-  };
+  };   
 
   // 사진 선택 시 미리보기
   const handleFileChange = async (e) => {
