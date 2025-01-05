@@ -6,14 +6,14 @@ const Post = require('../models/Post'); // 글 DB 모델
 const jwt = require('jsonwebtoken');
 const sharp = require('sharp');
 
-// 글 작성 Route
+// 글 작성 route
 router.post('/post', async (req, res) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
         if (!token) {
             return res.status(401).json({ error: '토큰이 없습니다.' });
         }
-
+  
         // 토큰 검증 및 userId 추출
         const decoded = jwt.verify(token, 'secretKey');
         const userId = decoded.id;
