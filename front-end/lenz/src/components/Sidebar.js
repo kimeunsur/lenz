@@ -17,7 +17,7 @@ const Sidebar = () => {
   const tabs = [
     { id: 'home', icon: <FaHome />, label: 'Home' },
     { id: 'search', icon: <AiOutlineSearch />, label: 'Search' },
-    { id: 'add', icon: <IoMdAdd />, label: 'Add' },
+    //{ id: 'add', icon: <IoMdAdd />, label: 'Add' },
     { id: 'heart', icon: <FiHeart />, label: 'Favorites' },
     { id: 'profile', icon: <CgProfile />, label: 'Profile' },
     { id: 'pin', icon: <BsPin />, label: 'Pin' },
@@ -38,8 +38,19 @@ const Sidebar = () => {
           <span className="label">{tab.label}</span>
         </div>
       ))}
-    </div>
-  );
+<div
+        className={`tab ${activeTab === 'add' ? 'active' : ''}`}
+        onClick={() => {
+          // Add를 위한 background location 설정
+          navigate('/add', { state: { background: location } });
+        }}
+      >
+        <div className="icon">
+          <IoMdAdd />
+        </div>
+        <span className="label">Add</span>
+      </div>
+    </div>  );
 };
 
 export default Sidebar;
