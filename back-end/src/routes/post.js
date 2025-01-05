@@ -5,6 +5,8 @@ const router = express.Router();
 const Post = require('../models/Post'); // 글 DB 모델
 const jwt = require('jsonwebtoken');
 const Follow = require('../models/Follow'); // Follow 모델 가져오기
+const sharp = require('sharp');
+
 // 글 작성 Route
 router.post('/post/me', async (req, res) => {
     try {
@@ -42,7 +44,16 @@ router.post('/post/me', async (req, res) => {
             const buffer = Buffer.from(image, 'base64');
             const uniqueName = `${Date.now()}.jpg`;
             const uploadPath = path.join(uploadDir, uniqueName);
-            fs.writeFileSync(uploadPath, buffer);
+
+
+            // sharp로 이미지 크기 조정
+            await sharp(buffer)
+                .resize(1024, 1024, {
+                    fit: sharp.fit.inside,
+                    withoutEnlargement: true, // 원본 크기보다 확대 방지
+                })
+                .toFormat('jpeg')
+                .toFile(uploadPath);
             imagePath = `/uploads/${uniqueName}`;
         }
 
@@ -67,7 +78,7 @@ router.post('/post/me', async (req, res) => {
 
 
 // 모든 게시물 가져오기
-router.get('/post', async (req, res) => {
+router.get('/post/me', async (req, res) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
         if (!token) {

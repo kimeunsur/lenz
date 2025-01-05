@@ -18,77 +18,50 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchProfileData = async () => {
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+  
       try {
-        const token = localStorage.getItem('token');
-
-        // 프로필 데이터 가져오기
-        const profileResponse = await fetch('/profile/me', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const [profileResponse, postsResponse, followersResponse, followingResponse] = await Promise.all([
+          fetch('/profile/me', { method: 'GET', headers }),
+          fetch('/post/me', { method: 'GET', headers }),
+          fetch('/user/me/followers', { method: 'GET', headers }),
+          fetch('/user/me/following', { method: 'GET', headers }),
+        ]);
+  
         if (profileResponse.ok) {
           const data = await profileResponse.json();
           setName(data.name || 'no name');
           setProfilePicture(data.profileImage || '');
-        } else {
-          console.error('프로필 데이터를 가져오는 데 실패했습니다:', await profileResponse.text());
         }
-
-        // 게시물 데이터 가져오기
-        const postsResponse = await fetch('/post', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+  
         if (postsResponse.ok) {
           const postData = await postsResponse.json();
           setPosts(postData.posts || []);
-        } else {
-          console.error('Post 데이터를 가져오는 데 실패했습니다:', await postsResponse.text());
         }
-
-        // 팔로워 데이터 가져오기
-        const followersResponse = await fetch('/user/me/followers', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+  
         if (followersResponse.ok) {
           const followersData = await followersResponse.json();
           setFollowers(followersData.followers || []);
           setFollowerCount(followersData.followers.length || 0);
         }
-
-        // 팔로잉 데이터 가져오기
-        const followingResponse = await fetch('/user/me/following', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+  
         if (followingResponse.ok) {
           const followingData = await followingResponse.json();
           setFollowing(followingData.following || []);
           setFollowingCount(followingData.following.length || 0);
         }
       } catch (error) {
-        console.error('서버 오류:', error);
+        console.error('데이터 가져오기 실패:', error);
       }
     };
-
+  
     fetchProfileData();
   }, []);
+  
 
   const handlePictureChange = async (event) => {
     const file = event.target.files[0];
