@@ -206,6 +206,7 @@
     /* 예: 레이아웃이나 배치 조정 */
     margin: 10px 0;
   }
+<<<<<<< HEAD
   /* 사진 팝업 */
 .post-popup-overlay {
   position: fixed;
@@ -252,3 +253,26 @@
   width: 400px;
   max-width: 90%;
 }
+=======
+  .post-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .post-popup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 500px;
+  }
+  
+>>>>>>> 1c6ca0d (9;34)
