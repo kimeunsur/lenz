@@ -1,0 +1,45 @@
+  /* 파일 버튼 자체를 감싸는 래퍼에 스타일을 줄 수도 있음 */
+  .file-input-wrapper {
+    /* 예: 레이아웃이나 배치 조정 */
+    margin: 10px 0;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh; 
+    display: flex;
+  }
+  .hidden-file-input {
+    display: none; 
+    /* 또는 visibility: hidden; 등으로 완전히 숨겨도 됨 */
+  }
+  
+  .custom-file-label {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: black;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    margin-bottom: 5%;
+  }
+
+
+.preview-wrapper {
+    width: 200px;
+    height: 200px;
+    overflow: hidden; /* 혹시 큰 이미지를 잘라내고 싶다면 사용 */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
