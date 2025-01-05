@@ -62,7 +62,9 @@ function Add() {
         throw new Error(errorData.error || '업로드 실패');
       }
 
-      const data = await response.json();
+
+      const {post} = await response.json();
+
       alert('글이 성공적으로 작성되었습니다!');
       navigate('/profile');
     } catch (error) {
