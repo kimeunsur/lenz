@@ -1,6 +1,4 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const { express, jwt, Post, Follow, authMiddleware, fs, path, sharp } = require('../modules/common');
 const router = express.Router();
 const Post = require('../models/Post'); // 글 DB 모델
 const jwt = require('jsonwebtoken');
@@ -14,17 +12,9 @@ const upload = multer({
     limits: { fileSize: 50 * 1024 * 1024 }, // 파일 크기 제한 (50MB)
 });
 
-// 글 작성 Route
-router.post('/post', upload.single('image'), async (req, res) => {
+router.post('/post',authMiddleware, async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ error: '토큰이 없습니다.' });
-        }
-  
-        // 토큰 검증 및 userId 추출
-        const decoded = jwt.verify(token, 'secretKey');
-        const userId = decoded.id;
+        const userId = req.user.id;
 
         const { content, image } = req.body;
         if (!content) {
@@ -110,19 +100,10 @@ router.get('/user/:id/posts', async (req, res) => {
 
 
 // 모든 게시물 가져오기
-router.get('/post/me', async (req, res) => {
+router.get('/post/me',authMiddleware, async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ error: '토큰이 없습니다.' });
-        }
-
-        const decoded = jwt.verify(token, 'secretKey');
-        const userId = decoded.id; // 토큰에서 추출된 userId
-
-        // 사용자의 게시물 불러오기 (최신순 정렬)
-        const posts = await Post.find({ userId }).sort({ createdAt: -1 });
-
+        const userId = req.user.id;
+        const posts = await Post.find({ userId }).sort({ createdAt: -1 });// 사용자의 게시물 불러오기 (최신순 정렬)
         res.status(200).json({ posts });
     } catch (err) {
         console.error('게시물 가져오기 오류:', err);
@@ -131,26 +112,18 @@ router.get('/post/me', async (req, res) => {
 });
 
 
-router.get('/post/following', async (req, res) => {
+router.get('/post/following',authMiddleware, async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ error: '토큰이 필요합니다.' });
-        }
-
-        const decoded = jwt.verify(token, 'secretKey');
-        const userId = decoded.id;
+        const userId = req.user.id;
 
         // 팔로우 대상 목록 가져오기
         const following = await Follow.find({ followerId: userId }).select('followingId');
-        console.log('Following data:', following);
+        //console.log('Following data:', following);
         const followingIds = following.map(f => f.followingId);
 
         // 팔로우한 유저의 게시물 100개 가져오기
-        const posts = await Post.find({ userId: { $in: followingIds } })
-                                .sort({ createdAt: -1 })
-                                .limit(100);
-        console.log('Fetched posts:', posts);
+        const posts = await Post.find({ userId: { $in: followingIds } }).sort({ createdAt: -1 }).limit(100);
+        //console.log('Fetched posts:', posts);
 
         res.status(200).json({ posts });
     } catch (err) {

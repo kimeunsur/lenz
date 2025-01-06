@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { FaHome } from 'react-icons/fa';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { IoMdAdd } from 'react-icons/io';
-import { FiHeart } from 'react-icons/fi';
+import { FiHeart, FiLogIn, FiLogOut } from 'react-icons/fi';
 import { CgProfile } from 'react-icons/cg';
 import { IoSettingsOutline } from "react-icons/io5";
 import './Sidebar.css';
@@ -57,9 +57,9 @@ const Sidebar = () => {
         }}
       >
         <div className="icon">
-        <IoSettingsOutline />
+          <FiLogOut />
         </div>  
-        <span className="label">Setting</span>
+        <span className="label">Logout</span>
       </div>
     </div>  );
 };

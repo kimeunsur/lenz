@@ -13,7 +13,7 @@ function SearchUser() {
     if (keyword.trim() !== '') {
       handleSearch();
     }
-  }, [page]);
+  }, [keyword, page]);
 
   const handleSearch = async () => {
     try {
