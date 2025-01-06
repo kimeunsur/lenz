@@ -1,9 +1,18 @@
 const { express, jwt, Post, Follow, authMiddleware, fs, path, sharp } = require('../modules/common');
 const router = express.Router();
+const Post = require('../models/Post'); // 글 DB 모델
+const jwt = require('jsonwebtoken');
+const Follow = require('../models/Follow'); // Follow 모델 가져오기
+const sharp = require('sharp');
+const multer = require('multer');
 
+// Multer 설정
+const upload = multer({
+    dest: 'uploads/', // 업로드 디렉토리 설정
+    limits: { fileSize: 50 * 1024 * 1024 }, // 파일 크기 제한 (50MB)
+});
 
-// 글 작성 하기
-router.post('/post/me',authMiddleware, async (req, res) => {
+router.post('/post',authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
 
@@ -13,24 +22,30 @@ router.post('/post/me',authMiddleware, async (req, res) => {
         }
 
         let imagePath = '';
+        const mime = require('mime-types'); // MIME 타입 처리 라이브러리
         if (image) {
-            // uploads 디렉토리 존재 여부 확인 및 생성
+            // Base64 데이터에서 MIME 타입과 데이터 분리
+            const matches = image.match(/^data:(image\/\w+);base64,(.+)$/); // matches 변수 선언 및 할당
+            if (!matches || matches.length !== 3) {
+                throw new Error('잘못된 이미지 데이터 형식입니다.');
+            }
+
+            const detectedMimeType = matches[1]; // 파일의 MIME 타입 추출
+            const base64Data = matches[2]; // Base64 데이터 추출
+            const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    
+            if (!allowedMimeTypes.includes(detectedMimeType)) {
+                throw new Error('허용되지 않는 파일 형식입니다.');
+            }
             const uploadDir = path.join(__dirname, '../uploads');
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }
-
-            // Base64 데이터 검증
-            if (image && image.trim() !== '') {
-                if (!/^([A-Za-z0-9+/=]+)$/.test(image)) {
-                    throw new Error('잘못된 Base64 데이터입니다.');
-                }
-                // 나머지 로직 유지
-            }
+            const extension = mime.extension(detectedMimeType); // 확장자 추출
+            const buffer = Buffer.from(base64Data, 'base64');
 
             // Base64 데이터를 파일로 저장
-            const buffer = Buffer.from(image, 'base64');
-            const uniqueName = `${Date.now()}.jpg`;
+            const uniqueName = `${Date.now()}.${extension}`;
             const uploadPath = path.join(uploadDir, uniqueName);
 
 
@@ -40,7 +55,7 @@ router.post('/post/me',authMiddleware, async (req, res) => {
                     fit: sharp.fit.inside,
                     withoutEnlargement: true, // 원본 크기보다 확대 방지
                 })
-                .toFormat('jpeg')
+                .toFormat(extension === 'png' ? 'png' : 'jpeg') // 형식에 따라 처리
                 .toFile(uploadPath);
             imagePath = `/uploads/${uniqueName}`;
         }

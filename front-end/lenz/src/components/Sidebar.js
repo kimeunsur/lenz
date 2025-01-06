@@ -5,6 +5,7 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { IoMdAdd } from 'react-icons/io';
 import { FiHeart, FiLogIn, FiLogOut } from 'react-icons/fi';
 import { CgProfile } from 'react-icons/cg';
+import { IoSettingsOutline } from "react-icons/io5";
 import './Sidebar.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
