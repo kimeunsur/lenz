@@ -76,15 +76,40 @@
     flex: 1;
   }
   
-  .follow-button {
-    width: 80px; /* 고정된 너비 */
-    padding: 10px;
-    background-color: #3897f0;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    text-align: center;
-  }
+/* 기본 버튼 스타일 */
+.follow-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* 팔로우 버튼 (파란색) */
+.follow-button.follow {
+  background-color: #007bff;
+  color: #fff;
+  border: 1px solid #007bff;
+}
+
+.follow-button.follow:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* 팔로잉 버튼 (흰색) */
+.follow-button.following {
+  background-color: #fff;
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.follow-button.following:hover {
+  background-color: #f8f9fa;
+}
+
   
   /* 페이지네이션 */
   .pagination {

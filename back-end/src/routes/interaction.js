@@ -140,6 +140,24 @@ router.get('/user/me/follow-stats', async (req, res) => {
     }
 });
 
+router.get('/user/:id/follow-stats', async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      // 팔로워 수 계산 (followingId가 상대 사용자의 ID인 경우)
+      const followerCount = await Follow.countDocuments({ followingId: id });
+  
+      // 팔로잉 수 계산 (followerId가 상대 사용자의 ID인 경우)
+      const followingCount = await Follow.countDocuments({ followerId: id });
+  
+      res.status(200).json({ followerCount, followingCount });
+    } catch (error) {
+      console.error('팔로우 통계 조회 오류:', error);
+      res.status(500).json({ error: '팔로우 통계 조회 중 오류가 발생했습니다.' });
+    }
+  });
+  
+
 router.get('/user/posts/count', async (req, res) => {
     try {
         // 쿼리 파라미터에서 userId 확인

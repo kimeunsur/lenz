@@ -8,7 +8,7 @@ import Profile from './pages/Profile';
 import Search from './pages/Search';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
-import Modal from './components/Modal'; 
+import UserProfile from './pages/UserProfile'; // 사용자 프로필 컴포넌트
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -79,6 +79,7 @@ function AppRoutes({ isLoggedIn, handleLogin, handleLogout }) {
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/profile/:id" element={<UserProfile />} /> {/* 프로필 경로 */}
             <Route path="/add" element={<Add />} />
             <Route path="/heart" element={<Favorites />} />
             <Route path="/profile" element={<Profile />} />
