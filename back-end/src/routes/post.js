@@ -64,6 +64,25 @@ router.post('/post/me',authMiddleware, async (req, res) => {
     }
 });
 
+// 특정 사용자의 게시물 가져오기
+router.get('/user/:id/posts', async (req, res) => {
+    try {
+        const { id } = req.params; // URL에서 사용자 ID 추출
+
+        // 해당 사용자의 게시물 불러오기 (최신순 정렬)
+        const posts = await Post.find({ userId: id }).sort({ createdAt: -1 });
+
+        if (!posts || posts.length === 0) {
+            return res.status(404).json({ message: '게시물이 없습니다.' });
+        }
+
+        res.status(200).json(posts);
+    } catch (err) {
+        console.error('특정 사용자 게시물 가져오기 오류:', err.message);
+        res.status(500).json({ error: '서버 오류가 발생했습니다.' });
+    }
+});
+
 
 // 모든 게시물 가져오기
 router.get('/post/me',authMiddleware, async (req, res) => {
