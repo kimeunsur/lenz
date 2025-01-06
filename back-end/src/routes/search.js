@@ -1,20 +1,8 @@
-// routes/user.js (또는 적절한 라우터 파일)
-
-// 필요한 모듈/모델 임포트
-const express = require('express');
+const { express, jwt, User, authMiddleware } = require('../modules/common');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // 경로 맞춰 수정
-// 토큰 검증 미들웨어가 있다면 임포트 후 router.get('/search', auth, ...) 식으로 사용
 
-// GET /users/search?keyword=xxx&page=1
-router.get('/search', async (req, res) => {
+router.get('/search',authMiddleware, async (req, res) => {
   try {
-    // 토큰 검증 (토큰 필요하다 했으니)
-    // const token = req.headers.authorization?.split(' ')[1];
-    // if (!token) {
-    //   return res.status(401).json({ error: '토큰이 없습니다.' });
-    // }
 
     // 검색어 & 페이지 파라미터
     const { keyword = '', page = 1 } = req.query; 

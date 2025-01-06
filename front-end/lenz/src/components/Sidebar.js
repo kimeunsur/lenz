@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { FaHome } from 'react-icons/fa';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { IoMdAdd } from 'react-icons/io';
-import { FiHeart } from 'react-icons/fi';
+import { FiHeart, FiLogIn, FiLogOut } from 'react-icons/fi';
 import { CgProfile } from 'react-icons/cg';
-import { BsPin } from 'react-icons/bs';
 import './Sidebar.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -57,9 +56,9 @@ const Sidebar = () => {
         }}
       >
         <div className="icon">
-          <BsPin />
+          <FiLogOut />
         </div>  
-        <span className="label">Pin</span>
+        <span className="label">Logout</span>
       </div>
     </div>  );
 };

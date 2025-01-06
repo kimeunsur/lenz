@@ -1,12 +1,7 @@
-const express = require('express');
-const User = require('../models/User');
+const { express, jwt, User, authMiddleware, fs, path, multer } = require('../modules/common');
 const router = express.Router();
-const authMiddleware = require('../middlewares/authMiddleware'); 
-//사진url 등록을 위해 아래 변수 추가
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
+const app = express();
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // 파일 저장 설정 <- 얘도 추가함..
 const storage = multer.diskStorage({
@@ -122,11 +117,12 @@ router.put('/user/:id/name', async (req, res) => {
         }
 
         res.status(200).json(updatedUser); // 업데이트 결과 반환
-    } catch (error) {
+    } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Error updating name', error });
+        res.status(500).json({ message: 'Error updating name', err });
     }
 });
+
 router.put('/user/:id/profile-picture', async (req, res) => {
     const { id } = req.params;
     const { profileImage } = req.body;
@@ -154,25 +150,23 @@ router.put('/user/:id/profile-picture', async (req, res) => {
     }
 });
 
-router.get('/token', (req, res) => {
-    try {
-        const token = req.headers.authorization?.split(' ')[1]; // 헤더에서 토큰 추출
-        if (!token) {
-            return res.status(400).json({ error: '토큰이 제공되지 않았습니다.' });
-        }
+// router.get('/token', (req, res) => {
+//     try {
+//         const token = req.headers.authorization?.split(' ')[1]; // 헤더에서 토큰 추출
+//         if (!token) {
+//             return res.status(400).json({ error: '토큰이 제공되지 않았습니다.' });
+//         }
 
-        // 토큰 디코딩
-        const decoded = jwt.verify(token, 'secretKey'); // 'secretKey'는 JWT 생성 시 사용한 키
-        res.status(200).json({ id: decoded.id, message: '토큰이 유효합니다.' });
-    } catch (err) {
-      console.error(err);
-      res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
-    }
-});
+//         // 토큰 디코딩
+//         const decoded = jwt.verify(token, 'secretKey'); // 'secretKey'는 JWT 생성 시 사용한 키
+//         res.status(200).json({ id: decoded.id, message: '토큰이 유효합니다.' });
+//     } catch (err) {
+//       console.error(err);
+//       res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
+//     }
+// });
 
 // 정적 파일 제공
-const app = express();
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 module.exports = router;
 

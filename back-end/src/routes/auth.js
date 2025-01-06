@@ -1,7 +1,5 @@
-const express = require('express');
-const User = require('../models/User');
+const { express, jwt, User, authMiddleware } = require('../modules/common');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // 회원가입
