@@ -3,7 +3,7 @@ const router = express.Router();
 
 
 // 글 작성 하기
-router.post('/post/me',authMiddleware, async (req, res) => {
+router.post('/post',authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
 
