@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken'); 
 
 const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', ''); // 'Bearer ' 제거
+  //const token = req.header('Authorization')?.replace('Bearer ', ''); // 'Bearer ' 제거
+  const token = req.header('Authorization')?.split(' ')[1]; // 'Bearer ' 제거
   
   if (!token) {
     return res.status(401).json({ message: '토큰이 없습니다. 접근이 거부됩니다.' });
