@@ -1,4 +1,4 @@
-const { express, jwt, User, authMiddleware } = require('../modules/common');
+const { express, jwt, User, authMiddleware, Follow } = require('../modules/common');
 const router = express.Router();
 
 router.get('/search',authMiddleware, async (req, res) => {
@@ -20,6 +20,19 @@ router.get('/search',authMiddleware, async (req, res) => {
     const users = await User.find(query, 'profileImage email name')
       .skip(skip)
       .limit(limit);
+
+    const currentUserId = req.user.id; // 현재 사용자 ID (ObjectId 그대로 사용)
+
+    const followStatuses = await Follow.find({
+      followerId: currentUserId,
+      followingId: { $in: users.map((user) => user._id) }, // ObjectId 그대로 사용
+    }).select('followingId');
+    const followingIds = followStatuses.map((follow) => follow.followingId.toString());
+    const usersWithFollowStatus = users.map((user) => ({
+      ...user.toObject(),
+      isFollowing: followingIds.includes(user._id.toString()), // 문자열로 비교
+    }));
+
 
     // 클라이언트로 응답
     return res.status(200).json({
