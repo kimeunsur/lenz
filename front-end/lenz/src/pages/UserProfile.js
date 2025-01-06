@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-//import './deco/UserProfile.css';
+import './deco/UserProfile.css';
 
 
 const UserProfile = () => {
@@ -8,6 +8,10 @@ const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState({ followerCount: 0, followingCount: 0 });
   const [posts, setPosts] = useState([]);
+  const [activeTab, setActiveTab] = useState(null); // 팔로워/팔로잉 탭 관리
+  const [followList, setFollowList] = useState([]); // 팔로워/팔로잉 목록
+  const [loadingList, setLoadingList] = useState(false); // 목록 로딩 상태
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -43,6 +47,30 @@ const UserProfile = () => {
     fetchUserData();
   }, [id]);
 
+// 팔로워 및 팔로잉 목록 불러오기
+const fetchFollowList = async (type) => {
+  try {
+    setLoadingList(true);
+    const token = localStorage.getItem('token');
+    const endpoint = type === 'followers' ? `/user/${id}/followers` : `/user/${id}/following`;
+    const response = await fetch(endpoint, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error(`${type} 목록을 불러오는 데 실패했습니다.`);
+    const data = await response.json();
+    setFollowList(data[type]); // followers 또는 following
+  } catch (error) {
+    console.error('팔로우 목록 로드 오류:', error.message);
+  } finally {
+    setLoadingList(false);
+  }
+};
+
+const handleTabChange = (type) => {
+  setActiveTab(type);
+  fetchFollowList(type);
+};
+
   if (!user) {
     return <div>로딩 중...</div>;
   }
@@ -57,12 +85,17 @@ const UserProfile = () => {
           <h1>{user.name}</h1>
           <p>{user.email}</p>
           <div className="stats">
-            <span><strong>{stats.followerCount}</strong> 팔로워</span>
-            <span><strong>{stats.followingCount}</strong> 팔로잉</span>
+          <span onClick={() => handleTabChange('followers')} style={{ cursor: 'pointer' }}>
+              <strong>{stats.followerCount}</strong> 팔로워
+            </span>
+            <span onClick={() => handleTabChange('following')} style={{ cursor: 'pointer' }}>
+              <strong>{stats.followingCount}</strong> 팔로잉
+            </span>
             <span><strong>{posts.length}</strong> 게시물</span>
           </div>
         </div>
       </div>
+
 
       {/* 게시물 섹션 */}
       <div className="posts-section">

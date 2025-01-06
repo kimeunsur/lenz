@@ -62,6 +62,30 @@ router.post('/follow/:followingId', authMiddleware, async (req, res) => {
     }
 });
 
+// 특정 사용자의 팔로우 상태 확인
+router.get('/follow/status/:userId', async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ error: '토큰이 없습니다.' });
+        }
+
+        const decoded = jwt.verify(token, 'secretKey');
+        const followerId = decoded.id; // 현재 사용자 ID
+        const { userId } = req.params;
+
+        // 팔로우 관계 확인
+        const follow = await Follow.findOne({ followerId, followingId: userId });
+        const isFollowing = !!follow;
+
+        res.status(200).json({ isFollowing });
+    } catch (err) {
+        console.error('팔로우 상태 확인 오류:', err.message);
+        res.status(500).json({ error: '서버 오류가 발생했습니다.' });
+    }
+});
+
+
 router.delete('/unfollow/:followingId', authMiddleware, async (req, res) => {
     try {
         const followerId = req.user.id; // 토큰에서 추출한 followerId

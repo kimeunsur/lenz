@@ -13,7 +13,7 @@ function Add() {
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
     });
@@ -21,7 +21,11 @@ function Add() {
 
   const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile) {
+      if (selectedFile) {
+        if (selectedFile.size > 5 * 1024 * 1024) { // 5MB 제한
+          alert('파일 크기가 5MB를 초과할 수 없습니다.');
+          return;
+      }
       setFile(selectedFile);
 
       const reader = new FileReader();
@@ -60,6 +64,8 @@ function Add() {
         const errorData = await response.json();
         throw new Error(errorData.error || '업로드 실패');
       }
+      const responseData = await response.json(); // JSON 응답 처리
+      console.log('응답 데이터:', responseData);
 
       alert('글이 성공적으로 작성되었습니다!');
       navigate('/profile');
@@ -93,7 +99,17 @@ function Add() {
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
-        <input type="file" accept="image/*" onChange={handleFileChange} />
+        <div className="file-input-wrapper">
+          <input
+            type="file"
+            id="fileUpload"
+            accept="image/*"
+            onChange={handleFileChange}
+          /> 
+          <label htmlFor="fileUpload" className="custom-file-label">
+            사진 찾기
+          </label>
+        </div>
         {previewImage && (
           <div className="preview">
             <img src={previewImage} alt="미리보기" />
