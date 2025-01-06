@@ -146,7 +146,7 @@ function SearchUser() {
                   onClick={() => handleFollow(user._id)}
                 >
                   팔로우
-                </button>
+                </button> 
               )}
             </div>
           ))}
