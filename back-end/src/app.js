@@ -5,6 +5,9 @@ const connectDB = require('./config/db');
 const app = express();
 app.use(express.json()); // 요청 바디를 JSON으로 파싱
 
+app.use(express.json({ limit: '10mb' })); // JSON 요청 본문 크기를 10MB로 설정
+app.use(express.urlencoded({ limit: '10mb', extended: true })); // URL 인코딩된 데이터도 동일한 크기 설정
+
 const path = require('path');
 
 // DB 연결

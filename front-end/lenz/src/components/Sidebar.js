@@ -5,7 +5,7 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { IoMdAdd } from 'react-icons/io';
 import { FiHeart } from 'react-icons/fi';
 import { CgProfile } from 'react-icons/cg';
-import { BsPin } from 'react-icons/bs';
+import { IoSettingsOutline } from "react-icons/io5";
 import './Sidebar.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -57,9 +57,9 @@ const Sidebar = () => {
         }}
       >
         <div className="icon">
-          <BsPin />
+        <IoSettingsOutline />
         </div>  
-        <span className="label">Pin</span>
+        <span className="label">Setting</span>
       </div>
     </div>  );
 };
