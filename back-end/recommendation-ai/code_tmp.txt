@@ -1,0 +1,24 @@
+import json
+
+with open('posts.json', 'r') as file:
+    posts = json.load(file)
+
+print(posts)
+
+fetch('posts.json')
+    .then(response => response.json())
+    .then(posts => console.log(posts))
+    .catch(error => console.error('Error:', error));
+
+
+
+"""
+model = api.load("doc2vec-google-news-300")  # 예시: Google News Doc2Vec
+pretrained_model_path = 'path/to/pretrained/doc2vec/model'
+model = Doc2Vec.load(pretrained_model_path)
+new_document = "This is a sample Instagram post."
+vector = model.infer_vector(new_document.split())
+print(vector)  # 벡터 값 출력
+similar_docs = model.dv.most_similar([vector], topn=5)  # 가장 유사한 5개 문서 찾기
+print(similar_docs)
+"""
