@@ -1,6 +1,8 @@
 const { express, jwt, Post, Follow, authMiddleware, fs, path, sharp} = require('../modules/common');
 const router = express.Router();
 const mongoose = require('mongoose');
+const Feed = require('../models/Feed');
+const { updateUserFeed, feedScheduler } = require('../jobs/feedScheduler');
 
 
 // 글 작성 하기
@@ -96,18 +98,19 @@ router.get('/post/me',authMiddleware, async (req, res) => {
     }
 });
 
+//팔로우한 유저의 게시물 가져오기
 router.get('/post/following',authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
 
         // 팔로우 대상 목록 가져오기
         const following = await Follow.find({ followerId: userId }).select('followingId');
-        //console.log('Following data:', following);
+        console.log('Following data:', following);
         const followingIds = following.map(f => f.followingId);
 
         // 팔로우한 유저의 게시물 100개 가져오기
         const posts = await Post.find({ userId: { $in: followingIds } }).sort({ createdAt: -1 }).limit(100);
-        //console.log('Fetched posts:', posts);
+        console.log('Fetched posts:', posts);
 
         res.status(200).json({ posts });
     } catch (err) {
@@ -115,6 +118,28 @@ router.get('/post/following',authMiddleware, async (req, res) => {
         res.status(500).json({ error: '서버 오류가 발생했습니다.' });
     }
 });
+
+//사용자별로 피드 가져오기; 프리로딩
+router.get('/post/following/loading', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id; // JWT에서 파싱된 사용자 ID 사용
+        await updateUserFeed(userId);
+        const feed = await Feed.findOne({ userId }).populate({
+            path: 'posts.postId',
+        select: 'content image createdAt likes userId',
+    }); // 게시글 정보 포함
+        if (!feed) {
+            return res.status(404).json({ message: 'Feed not found' });
+        }
+        res.json(feed);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+
 //좋아요 순
 router.get('/post/sort-by-like', authMiddleware, async (req, res) => {
     try {

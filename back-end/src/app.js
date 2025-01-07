@@ -3,8 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const app = express();
-app.use(express.json()); // 요청 바디를 JSON으로 파싱
+const {feedScheduler} = require('./jobs/feedScheduler'); // 스케줄러 불러오기
 
+app.use(express.json()); // 요청 바디를 JSON으로 파싱
 app.use(express.json({ limit: '10mb' })); // JSON 요청 본문 크기를 10MB로 설정
 app.use(express.urlencoded({ limit: '10mb', extended: true })); // URL 인코딩된 데이터도 동일한 크기 설정
 
@@ -12,6 +13,10 @@ const path = require('path');
 
 // DB 연결
 connectDB();
+console.log('feedScheduler 호출됨?');
+feedScheduler();
+console.log('feedScheduler 호출됨!');
+
 
 // 라우터 설정
 app.use('/', require('./routes/auth'));
