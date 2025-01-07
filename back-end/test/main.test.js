@@ -338,6 +338,9 @@ describe('통합 테스트: 회원가입, 글 작성, 좋아요, 팔로우', () 
     expect(Array.isArray(res.body.posts)).toBe(true);
 
     const posts = res.body.posts;
+    // posts.forEach(post => {
+    //   console.log(` like - Post ID: ${post._id}, Recommendation Score: ${post.recommendationScore}`);
+    // });
     expect(posts.length).toBeGreaterThanOrEqual(5);
 
     expect(posts[0]._id).toBe(postId5); // 포스트 5
@@ -363,18 +366,31 @@ test('유저2가 /post/sort-by-followers 호출 시 정렬 확인', async () => 
   //     if (post._id === postId3) return '3';
   //     if (post._id === postId4) return '4';
   //     if (post._id === postId5) return '5';
-  //     return 'unknown'; // 알 수 없는 ID일 경우
+  //     return 'unknown'; // 알 수 없는 ID일 경우 
   // });
 
   // console.log(postIds); // 변환된 번호 배열 출력
+
+  // posts.forEach(post => {
+  //     console.log(`followers - Post ID: ${post._id}, Recommendation Score: ${post.recommendationScore}`);
+  // });
   expect(posts.length).toBeGreaterThanOrEqual(5);
 
   expect(posts[0]._id).toBe(postId2); // 포스트 1
+  expect(posts[0].recommendationScore).toBeGreaterThan(posts[1].recommendationScore);
+  
   expect(posts[1]._id).toBe(postId1); // 포스트 2
+  expect(posts[1].recommendationScore).toBeGreaterThan(posts[2].recommendationScore);
+  
   expect(posts[2]._id).toBe(postId4); // 포스트 4
+  expect(posts[2].recommendationScore).toBeGreaterThan(posts[3].recommendationScore);
+  
   expect(posts[3]._id).toBe(postId3); // 포스트 3
+  expect(posts[3].recommendationScore).toBeGreaterThan(posts[4].recommendationScore);
+  
   expect(posts[4]._id).toBe(postId5); // 포스트 5
 });
+
 test('유저2가 /post/sort-by-coFollower 호출 시 정렬 확인', async () => {
   const res = await request(app)
       .get('/post/sort-by-coFollower')
@@ -394,9 +410,11 @@ test('유저2가 /post/sort-by-coFollower 호출 시 정렬 확인', async () =>
 // });
 
 // console.log(postIds);
-
-  expect(posts.length).toBe(0);
-});
+    // posts.forEach(post => {
+    //   console.log(`coFollower Post ID: ${post._id}, Recommendation Score: ${post.recommendationScore}`);
+    // });
+    expect(posts.length).toBe(0);
+  });
 test('유저2가 /post/sort-by-coLiker 호출 시 정렬 확인', async () => {
   const res = await request(app)
       .get('/post/sort-by-coLiker')
@@ -416,10 +434,48 @@ test('유저2가 /post/sort-by-coLiker 호출 시 정렬 확인', async () => {
 // });
 
 // console.log("지금뜬거:"+postIds);
+  // posts.forEach(post => {
+  //   console.log(` coLiker Post ID: ${post._id}, Recommendation Score: ${post.recommendationScore}`);
+  // });
 expect(posts.length).toBe(1);
 
 expect(posts[0]._id).toBe(postId2); // 포스트 2
 });
+test('유저2가 /post/recommendations 호출 시 정렬 확인', async () => {
+  const res = await request(app)
+      .get('/post/recommendations')
+      .set('Authorization', `Bearer ${token2}`); // 유저2의 인증 토큰 사용
+
+  // 1. 상태 코드 확인
+  expect(res.status).toBe(200);
+
+  // 2. posts 배열 확인
+  expect(Array.isArray(res.body.posts)).toBe(true);
+
+  const posts = res.body.posts;
+
+  // 3. posts 배열 출력
+  // posts.forEach(post => {
+  //     console.log(`Recommendation - Post ID: ${post.postId}, Score: ${post.recommendationScore}`);
+  // });
+
+  // 4. 최소 5개의 포스트가 반환되었는지 확인
+  expect(posts.length).toBe(5);
+
+  // 5. 포스트 정렬 확인 (예상 순서: 2, 1, 5, 3, 4)
+  expect(posts[0].postId).toBe(postId2); // 포스트 2
+  expect(posts[1].postId).toBe(postId1); // 포스트 1
+  expect(posts[2].postId).toBe(postId5); // 포스트 5
+  expect(posts[3].postId).toBe(postId3); // 포스트 3
+  expect(posts[4].postId).toBe(postId4); // 포스트 4
+
+  // 6. 점수가 내림차순으로 정렬되었는지 확인
+  for (let i = 0; i < posts.length - 1; i++) {
+      expect(posts[i].recommendationScore).toBeGreaterThanOrEqual(posts[i + 1].recommendationScore
+      );
+  }
+});
+
   test('유저2가 팔로우한 유저의 게시물 확인', async () => {
     const res = await request(app)
         .get('/post/following')

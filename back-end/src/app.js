@@ -24,6 +24,7 @@ app.use('/', require('./routes/profile'));
 app.use('/', require('./routes/interaction'));
 app.use('/', require('./routes/post'));
 app.use('/', require('./routes/search'));
+app.use('/', require('./routes/ai-recommendation'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //app.use('/api', profileRouter); 
 
