@@ -11,11 +11,11 @@ import Login from './components/Login';
 import UserProfile from './pages/UserProfile'; // 사용자 프로필 컴포넌트
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [token, setToken] = React.useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState(null);
 
-
-  useEffect(() => {
+  // 토큰 초기화
+  const initializeToken = () => {
     try {
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
@@ -23,24 +23,29 @@ function App() {
         setIsLoggedIn(true);
       }
     } catch (error) {
-      console.error('Token load error:', error);
+      console.error('Error loading token:', error);
     }
+  };
+
+  // 컴포넌트 마운트 시 토큰 로드
+  useEffect(() => {
+    initializeToken();
   }, []);
 
+  // 로그인 처리
   const handleLogin = (jwtToken) => {
     setIsLoggedIn(true);
     setToken(jwtToken);
-    console.log("JWT TOKEN 저장:", jwtToken);
     localStorage.setItem('token', jwtToken);
+    console.log("JWT TOKEN 저장:", jwtToken);
   };
 
-
-
+  // 로그아웃 처리
   const handleLogout = () => {
     setIsLoggedIn(false);
     setToken(null);
     localStorage.removeItem('token');
-  }
+  };
 
   return (
     <Router>
@@ -54,48 +59,82 @@ function App() {
 }
 
 function AppRoutes({ isLoggedIn, handleLogin, handleLogout }) {
-  // 현재 location
   const location = useLocation();
-  // location.state에 background가 있으면 모달 오버레이로 취급
-  const background = location.state && location.state.background;
+  const background = location.state?.background;
 
-  if (!isLoggedIn) {
-    // 로그인이 안 되어 있으면 Login 컴포넌트만 표시
-    return <Login onLogin={handleLogin} />;
-  }
-
-  // 로그인이 되어 있으면 실제 페이지 + 모달 라우트 처리
+  // 로그인 여부에 따른 렌더링
   return (
     <>
-      <div className="app-layout">
-        <Sidebar />
-        <div className="page-content">
-          {/* 
-            1) location을 background || location 으로 전달 
-            배경이 있으면 기존화면을 그리면서, 
-            배경이 없으면(직접 /add로 진입 등) 전체가 교체됨 
-          */}
-          <Routes location={background || location}>
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/profile/:id" element={<UserProfile />} /> {/* 프로필 경로 */}
-            <Route path="/add" element={<Add />} />
-            <Route path="/heart" element={<Favorites />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/pin" element={<Pin onLogout={handleLogout} />} />
-          </Routes>
-        </div>
-      </div>
-
-      {background && (
-        <Routes>
-          <Route path="/pin" element={<Pin onLogout={handleLogout} />} />
-          <Route path="/add" element={ <Add /> }/>
-        </Routes>
+      {!isLoggedIn ? (
+        <Login onLogin={handleLogin} />
+      ) : (
+        <AuthenticatedRoutes
+          location={location}
+          background={background}
+          handleLogout={handleLogout}
+        />
       )}
     </>
   );
+}
+
+function AuthenticatedRoutes({ location, background, handleLogout }) {
+  const [activePopup, setActivePopup] = useState(null); // 현재 활성화된 팝업 경로
+
+  const openPopup = (popupPath) => {
+      setActivePopup(popupPath);
+  };
+
+  const closePopup = () => {
+    setActivePopup(null);
+  };
+
+  return (
+    <div className="app-layout">
+      <Sidebar />
+      <div className="page-content">
+        {/* 기본 페이지 라우트 */}
+        <Routes location={background || location}>
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/profile/:id" element={<UserProfile />} />
+          <Route path="/add" element={<Add />} />
+          <Route path="/heart" element={<Favorites />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/pin" element={<Pin onLogout={handleLogout} />} />
+        </Routes>
+      </div>
+
+      {/* 모달 라우트 처리 (한 번에 하나만 표시) */}
+      { activePopup === "/pin" && (
+        <Pin onLogout={handleLogout} closePopup={closePopup} />
+      )}
+      { activePopup === "/add" && (
+        <Add closePopup={closePopup} />
+      )}
+
+
+        <Routes>
+          <Route path="/pin" 
+          element={<PopupWrapper path="/pin" openPopup={openPopup} />}
+          />
+          <Route path="/add" 
+          element={<PopupWrapper path="/add" openPopup={openPopup} />}
+          />
+        </Routes>
+    </div>
+  );
+}
+
+// 팝업 경로를 활성화하는 감시 컴포넌트
+function PopupWrapper({ path, openPopup }) {
+  useEffect(() => {
+    openPopup(path);
+    return () => openPopup(null); // 컴포넌트 언마운트 시 팝업 닫기
+  }, [path, openPopup]);
+
+  return null; // UI 요소가 필요 없는 감시용 컴포넌트
 }
 
 export default App;
