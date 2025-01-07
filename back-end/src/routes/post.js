@@ -2,44 +2,27 @@ const { express, jwt, Post, Follow, authMiddleware, fs, path, sharp } = require(
 const router = express.Router();
 const mongoose = require('mongoose');
 const Feed = require('../models/Feed');
+
+const { getRecommendedPosts, getPostsSortedByLikes, getPostsSortedByFollowers, getPostsSortedByCoFollower, getPostsSortedByCoLiker } = require('./recommendation'); // 구조 분해 할당으로 함수 가져오기
 const { updateUserFeed, feedScheduler } = require('../jobs/feedScheduler');
-const { getRecommendedPosts, getPostsSortedByLikes, getPostsSortedByFollowers, getPostsSortedByCoFollower, getPostsSortedByCoLiker } = require('./recommendation'); // 추천 함수 가져오기
+const upload = require('../middlewares/upload');
 
 // 글 작성 하기
-router.post('/post/me', authMiddleware, async (req, res) => {
+router.post('/post/me', authMiddleware, upload.single('image'), async (req, res) => {
+
+
     try {
         const userId = req.user.id;
+        const { content } = req.body;
 
-        const { content, image } = req.body;
         if (!content) {
             return res.status(403).json({ error: 'content는 필수입니다.' });
         }
 
-        let imagePath = '';
-        if (image) {
-            const uploadDir = path.join(__dirname, '../uploads');
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
-            }
+        let imagePath = '/uploads/default.jpeg'; // 기본 이미지 경로 설정
+        if (req.file) {
+            imagePath = `/uploads/${req.file.filename}`;
 
-            if (image && image.trim() !== '') {
-                if (!/^([A-Za-z0-9+/=]+)$/.test(image)) {
-                    throw new Error('잘못된 Base64 데이터입니다.');
-                }
-            }
-
-            const buffer = Buffer.from(image, 'base64');
-            const uniqueName = `${Date.now()}.jpg`;
-            const uploadPath = path.join(uploadDir, uniqueName);
-
-            await sharp(buffer)
-                .resize(1024, 1024, {
-                    fit: sharp.fit.inside,
-                    withoutEnlargement: true,
-                })
-                .toFormat('jpeg')
-                .toFile(uploadPath);
-            imagePath = `/uploads/${uniqueName}`;
         }
 
         const newPost = new Post({
@@ -48,6 +31,7 @@ router.post('/post/me', authMiddleware, async (req, res) => {
             image: imagePath,
         });
         await newPost.save();
+
 
         res.status(201).json({
             message: '글이 성공적으로 작성되었습니다.',
@@ -107,7 +91,6 @@ router.get('/post/following', authMiddleware, async (req, res) => {
         res.status(500).json({ error: '서버 오류가 발생했습니다.' });
     }
 });
-
 // 사용자별로 피드 가져오기; 프리로딩
 router.get('/post/following/loading', authMiddleware, async (req, res) => {
     try {
@@ -177,9 +160,21 @@ router.get('/post/sort-by-coLiker', authMiddleware, async (req, res) => {
 // 추천 게시물 가져오기
 router.get('/post/recommendations', authMiddleware, async (req, res) => {
     try {
-        const userId = req.user.id;
-        const recommendedPosts = await getRecommendedPosts(userId);
-        res.status(200).json({ posts: recommendedPosts });
+        const userId = req.user.id; 
+        const recommendedPosts = await getRecommendedPosts(userId); 
+
+        // 추천 게시물 ID로 실제 Post 데이터 조회
+        const postIds = recommendedPosts.map(post => post.postId); 
+        const posts = await Post.find({ _id: { $in: postIds } }).lean();
+
+        // recommendationScore 추가 및 정렬
+        const postsWithScores = posts.map(post => {
+            const score = recommendedPosts.find(rp => rp.postId === post._id.toString()).recommendationScore;
+            return { ...post, recommendationScore: score };
+        }).sort((a, b) => b.recommendationScore - a.recommendationScore); // 점수 내림차순 정렬
+
+        res.status(200).json({ posts: postsWithScores });
+
     } catch (err) {
         console.error('추천 게시물 가져오기 오류:', err.message);
         res.status(500).json({ error: '서버 오류가 발생했습니다.' });
