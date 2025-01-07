@@ -6,7 +6,7 @@ const connectDB = require('../src/config/db');
 const jwt = require('jsonwebtoken');
 const { updateUserFeed, feedScheduler } = require('../src/jobs/feedScheduler'); // feedScheduler 임포트
 
-describe('프리로딩 테스트: 캐시된 피드 확인', () => {
+describe('추천 게시물 API 테스트', () => {
     let token1, token2, userId1, userId2;
 
     beforeAll(async () => {
@@ -56,8 +56,6 @@ describe('프리로딩 테스트: 캐시된 피드 확인', () => {
         const db = mongoose.connection.getClient().db('testDatabase');
         await db.dropDatabase();
         await mongoose.connection.close();
-        feedScheduler.stop(); // 테스트 종료 후 스케줄러 정지
-
     });
 
     test('캐시된 피드 데이터를 반환', async () => {

@@ -4,6 +4,7 @@ const Follow = require('../models/Follow'); // Follow 모델
 const Post = require('../models/Post'); // Post 모델
 const { User } = require('../modules/common');
 let job = null; // 스케줄러 작업 저장
+const mongoose = require('mongoose'); // 추가
 
 // 사용자별 피드 업데이트 함수
 const updateUserFeed = async (userId) => {

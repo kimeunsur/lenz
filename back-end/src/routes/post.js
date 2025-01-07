@@ -81,7 +81,7 @@ router.get('/post/following', authMiddleware, async (req, res) => {
         const following = await Follow.find({ followerId: userId }).select('followingId');
         console.log('Following data:', following);
         const followingIds = following.map(f => f.followingId);
-
+        console.log('Following IDs:', followingIds);
         const posts = await Post.find({ userId: { $in: followingIds } }).sort({ createdAt: -1 }).limit(100);
         console.log('Fetched posts:', posts);
 
@@ -103,6 +103,7 @@ router.get('/post/following/loading', authMiddleware, async (req, res) => {
         if (!feed) {
             return res.status(404).json({ message: 'Feed not found' });
         }
+
         res.json(feed);
     } catch (err) {
         console.error(err);
