@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
         }
 
         // 새 유저 생성
-        const newUser = new User({ email, password });
+        const newUser = new User({ email, password, profileImage: "http://localhost:3000/uploads/default.jpeg" });
 
         await newUser.save();
 

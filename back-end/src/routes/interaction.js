@@ -176,36 +176,45 @@ router.get('/user/posts/count', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/user/me/followers',authMiddleware, async (req, res) => {
+router.get('/user/me/followers', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
 
         const followers = await Follow.find({ followingId: userId })
-            .sort({ createdAt: -1 }) // 최신순 정렬
+            .sort({ createdAt: -1 })
             .limit(50)
-            .select('followerId'); // followerId만 선택
-        //console.log(followers)
-        const followerIds = followers.map(f => f.followerId);
+            .populate('followerId', '_id email name profileImage'); // 필요한 필드만 가져오기
 
-        res.status(200).json({ followers: followerIds });
+        const formattedFollowers = followers.map(f => ({
+            id: f.followerId._id,
+            email: f.followerId.email,
+            name: f.followerId.name || 'Unknown',
+            profileImage: f.followerId.profileImage || ''
+        }));
+
+        res.status(200).json({ followers: formattedFollowers });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: '팔로워 목록 조회 중 오류 발생' });
     }
 });
-
 router.get('/user/me/following', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
 
         const following = await Follow.find({ followerId: userId })
-            .sort({ createdAt: -1 }) // 최신순 정렬
+            .sort({ createdAt: -1 })
             .limit(50)
-            .select('followingId'); // followingId만 선택
+            .populate('followingId', '_id email name profileImage'); // 필요한 필드만 가져오기
 
-        const followingIds = following.map(f => f.followingId);
+        const formattedFollowing = following.map(f => ({
+            id: f.followingId._id,
+            email: f.followingId.email,
+            name: f.followingId.name || 'Unknown',
+            profileImage: f.followingId.profileImage || ''
+        }));
 
-        res.status(200).json({ following: followingIds });
+        res.status(200).json({ following: formattedFollowing });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: '팔로잉 목록 조회 중 오류 발생' });

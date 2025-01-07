@@ -13,13 +13,14 @@ const path = require('path');
 // DB 연결
 connectDB();
 
+
 // 라우터 설정
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/profile')); 
 app.use('/', require('./routes/interaction'));
 app.use('/', require('./routes/post'));
 app.use('/', require('./routes/search'));
-app.use('/', require('./routes/ai-recommendation'));
+//app.use('/', require('./routes/ai-recommendation'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //app.use('/api', profileRouter); 
 

@@ -2,47 +2,21 @@ const { express, jwt, Post, Follow, authMiddleware, fs, path, sharp} = require('
 const router = express.Router();
 const mongoose = require('mongoose');
 const { getRecommendedPosts, getPostsSortedByLikes, getPostsSortedByFollowers, getPostsSortedByCoFollower, getPostsSortedByCoLiker } = require('./recommendation'); // 구조 분해 할당으로 함수 가져오기
+const upload = require('../middlewares/upload');
+
 // 글 작성 하기
-router.post('/post/me',authMiddleware, async (req, res) => {
+router.post('/post/me', authMiddleware, upload.single('image'), async (req, res) => {
     try {
         const userId = req.user.id;
+        const { content } = req.body;
 
-        const { content, image } = req.body;
         if (!content) {
             return res.status(403).json({ error: 'content는 필수입니다.' });
         }
 
-        let imagePath = '';
-        if (image) {
-            // uploads 디렉토리 존재 여부 확인 및 생성
-            const uploadDir = path.join(__dirname, '../uploads');
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
-            }
-
-            // Base64 데이터 검증
-            if (image && image.trim() !== '') {
-                if (!/^([A-Za-z0-9+/=]+)$/.test(image)) {
-                    throw new Error('잘못된 Base64 데이터입니다.');
-                }
-                // 나머지 로직 유지
-            }
-
-            // Base64 데이터를 파일로 저장
-            const buffer = Buffer.from(image, 'base64');
-            const uniqueName = `${Date.now()}.jpg`;
-            const uploadPath = path.join(uploadDir, uniqueName);
-
-
-            // sharp로 이미지 크기 조정
-            await sharp(buffer)
-                .resize(1024, 1024, {
-                    fit: sharp.fit.inside,
-                    withoutEnlargement: true, // 원본 크기보다 확대 방지
-                })
-                .toFormat('jpeg')
-                .toFile(uploadPath);
-            imagePath = `/uploads/${uniqueName}`;
+        let imagePath = '/uploads/default.jpeg'; // 기본 이미지 경로 설정
+        if (req.file) {
+            imagePath = `/uploads/${req.file.filename}`;
         }
 
         // 글 DB에 저장
@@ -55,7 +29,7 @@ router.post('/post/me',authMiddleware, async (req, res) => {
 
         res.status(201).json({ 
             message: '글이 성공적으로 작성되었습니다.', 
-            postId: newPost._id, // postId 추가
+            postId: newPost._id,
             post: newPost 
         });
     } catch (err) {
@@ -95,6 +69,7 @@ router.get('/post/me',authMiddleware, async (req, res) => {
     }
 });
 
+//팔로우하는애들 게시물 다 가져오기
 router.get('/post/following',authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
@@ -114,7 +89,6 @@ router.get('/post/following',authMiddleware, async (req, res) => {
         res.status(500).json({ error: '서버 오류가 발생했습니다.' });
     }
 });
-
 
 //좋아요 순
 router.get('/post/sort-by-like', authMiddleware, async (req, res) => {
@@ -162,9 +136,20 @@ router.get('/post/sort-by-coLiker', authMiddleware, async (req, res) => {
 
 router.get('/post/recommendations', authMiddleware, async (req, res) => {
     try {
-        const userId = req.user.id; // authMiddleware를 통해 유저 ID 가져옴
-        const recommendedPosts = await getRecommendedPosts(userId); // 추천 게시물 가져오기
-        res.status(200).json({ posts: recommendedPosts });
+        const userId = req.user.id; 
+        const recommendedPosts = await getRecommendedPosts(userId); 
+
+        // 추천 게시물 ID로 실제 Post 데이터 조회
+        const postIds = recommendedPosts.map(post => post.postId); 
+        const posts = await Post.find({ _id: { $in: postIds } }).lean();
+
+        // recommendationScore 추가 및 정렬
+        const postsWithScores = posts.map(post => {
+            const score = recommendedPosts.find(rp => rp.postId === post._id.toString()).recommendationScore;
+            return { ...post, recommendationScore: score };
+        }).sort((a, b) => b.recommendationScore - a.recommendationScore); // 점수 내림차순 정렬
+
+        res.status(200).json({ posts: postsWithScores });
     } catch (err) {
         console.error('추천 게시물 가져오기 오류:', err.message);
         res.status(500).json({ error: '서버 오류가 발생했습니다.' });

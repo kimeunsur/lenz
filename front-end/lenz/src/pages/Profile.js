@@ -203,9 +203,9 @@ const Profile = () => {
           <div className="popup">
             <h2>팔로워</h2>
             <ul>
-              {followers.map((id, index) => (
+              {followers.map((follower, index) => (
                 <li key={index}>
-                  <span>{id}</span>
+                  <span>{follower.name || follower.email}</span>
                 </li>
               ))}
             </ul>
@@ -221,9 +221,9 @@ const Profile = () => {
           <div className="popup">
             <h2>팔로잉</h2>
             <ul>
-              {following.map((id, index) => (
+              {following.map((follow, index) => (
                 <li key={index}>
-                  <span>{id}</span>
+                  <span>{follow.name || follow.email}</span>
                 </li>
               ))}
             </ul>

@@ -10,32 +10,25 @@ function Add() {
   const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
 
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleFileChange = async (e) => {
+  
+  const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-      if (selectedFile) {
-        if (selectedFile.size > 5 * 1024 * 1024) { // 5MB 제한
-          alert('파일 크기가 5MB를 초과할 수 없습니다.');
-          return;
+    if (selectedFile) {
+      if (selectedFile.size > 10 * 1024 * 1024) { // 10MB 제한
+        alert('파일 크기가 10MB를 초과할 수 없습니다.');
+        return;
       }
       setFile(selectedFile);
 
       const reader = new FileReader();
       reader.onload = (event) => {
-        setPreviewImage(event.target.result);
+        setPreviewImage(event.target.result); // 미리보기 이미지 설정
       };
       reader.readAsDataURL(selectedFile);
     }
   };
 
+  
   const handleUpload = async () => {
     if (!file || !content) {
       alert('사진과 글 내용을 입력하세요.');
@@ -43,28 +36,26 @@ function Add() {
     }
 
     try {
-      const base64Image = await convertToBase64(file);
       const token = localStorage.getItem('token');
 
-      const requestData = {
-        content,
-        image: base64Image,
-      };
+      const formData = new FormData();
+      formData.append('content', content);
+      formData.append('image', file);
 
-      const response = await fetch('/post', {
+      const response = await fetch('/post/me', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // 인증 토큰
         },
-        body: JSON.stringify(requestData),
+        body: formData,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || '업로드 실패');
       }
-      const responseData = await response.json(); // JSON 응답 처리
+
+      const responseData = await response.json();
       console.log('응답 데이터:', responseData);
 
       alert('글이 성공적으로 작성되었습니다!');
@@ -78,6 +69,7 @@ function Add() {
   const handleClose = () => {
     setIsOpen(false);
   };
+
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('popup-open');
@@ -86,7 +78,7 @@ function Add() {
     }
     return () => document.body.classList.remove('popup-open');
   }, [isOpen]);
-  
+
   if (!isOpen) return null;
 
   return (
@@ -99,7 +91,7 @@ function Add() {
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
-        <div className="file-input-wrapper">
+        <div className="file-input-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <input
             type="file"
             id="fileUpload"

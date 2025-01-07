@@ -454,25 +454,19 @@ test('유저2가 /post/recommendations 호출 시 정렬 확인', async () => {
 
   const posts = res.body.posts;
 
-  // 3. posts 배열 출력
-  // posts.forEach(post => {
-  //     console.log(`Recommendation - Post ID: ${post.postId}, Score: ${post.recommendationScore}`);
-  // });
-
-  // 4. 최소 5개의 포스트가 반환되었는지 확인
+  // 3. 최소 5개의 포스트가 반환되었는지 확인
   expect(posts.length).toBe(5);
 
-  // 5. 포스트 정렬 확인 (예상 순서: 2, 1, 5, 3, 4)
-  expect(posts[0].postId).toBe(postId2); // 포스트 2
-  expect(posts[1].postId).toBe(postId1); // 포스트 1
-  expect(posts[2].postId).toBe(postId5); // 포스트 5
-  expect(posts[3].postId).toBe(postId3); // 포스트 3
-  expect(posts[4].postId).toBe(postId4); // 포스트 4
+  // 4. 포스트 정렬 확인 (예상 순서: 2, 1, 5, 3, 4)
+  expect(posts[0]._id.toString()).toBe(postId2); // 포스트 2
+  expect(posts[1]._id.toString()).toBe(postId1); // 포스트 1
+  expect(posts[2]._id.toString()).toBe(postId5); // 포스트 5
+  expect(posts[3]._id.toString()).toBe(postId3); // 포스트 3
+  expect(posts[4]._id.toString()).toBe(postId4); // 포스트 4
 
-  // 6. 점수가 내림차순으로 정렬되었는지 확인
+  // 5. 점수가 내림차순으로 정렬되었는지 확인
   for (let i = 0; i < posts.length - 1; i++) {
-      expect(posts[i].recommendationScore).toBeGreaterThanOrEqual(posts[i + 1].recommendationScore
-      );
+      expect(posts[i].recommendationScore).toBeGreaterThanOrEqual(posts[i + 1].recommendationScore);
   }
 });
 
@@ -497,8 +491,9 @@ test('유저2가 /post/recommendations 호출 시 정렬 확인', async () => {
     //console.log('Expected output: 유저2의 팔로워 목록에 유저1만 포함, status=200');
     //console.log(res.body.following);
     expect(res.status).toBe(200);
-    expect(res.body.following).toHaveLength(2); // 팔로워 한 명만 있어야 함
-    expect(res.body.following[0]).toBe(userId2); // 유저2의 ID가 팔로워 목록에 있어야 함
+    expect(res.body.following).toHaveLength(2); // 팔로워 두 명만 있어야 함
+    const followingIds = res.body.following.map(f => f.id);
+    expect(followingIds).toContain(userId2); // 유저2의 ID가 팔로워 목록에 있어야 함
 });
 
   test('유저1의 팔로워 수가 3 증가했는지 확인', async () => {
