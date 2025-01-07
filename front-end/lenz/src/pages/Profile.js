@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 import './deco/Profile.css';
 import './Profile.css';
-
+import { FiHeart } from 'react-icons/fi';
 const Profile = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false); // 프로필 편집 모드
   const [profilePicture, setProfilePicture] = useState(''); // 프로필 사진
@@ -150,6 +150,39 @@ const Profile = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
+  const handleLikeToggle = async (postId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/post/${postId}/like`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.ok) {
+        const updatedPosts = posts.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                likes: post.likes.includes(token)
+                  ? post.likes.filter((userId) => userId !== token)
+                  : [...post.likes, token],
+              }
+            : post
+        );
+        setPosts(updatedPosts);
+      } else {
+        console.error('좋아요 실패:', await response.text());
+        alert('좋아요 작업에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('서버 오류:', error);
+      alert('서버 오류가 발생했습니다.');
+    }
+  };
+  
+
   return (
     <div className="profile-container">
       <div className="profile-header">
@@ -267,20 +300,37 @@ const Profile = () => {
       {/* 팝업 창 */}
       {/* 사진 클릭 팝업 */}
       {selectedPopupOpen && selectedPost && (
-        <div className="post-popup-overlay" onClick={handleClosePopup}>
-          <div className="post-popup">
-            {selectedPost.image && (
-              <img
-                src={selectedPost.image}
-                alt="Selected Post"
-                className="post-popup-image"
-              />
-            )}
-            <p>{selectedPost.content}</p>
-            <button onClick={handleClosePopup}>닫기</button>
-          </div>
-        </div>
+  <div className="post-popup-overlay" onClick={handleClosePopup}>
+    <div className="post-popup">
+      {/* 이미지 표시 */}
+      {selectedPost.image && (
+        <img
+          src={selectedPost.image}
+          alt="Selected Post"
+          className="post-popup-image"
+        />
       )}
+      <p>{selectedPost.content || '내용이 없습니다.'}</p>
+
+      {/* 좋아요 버튼과 개수 */}
+      <div className="post-likes">
+        <FiHeart
+          style={{
+            color: selectedPost.likes?.includes(localStorage.getItem('token')) ? 'red' : 'gray',
+            cursor: 'pointer',
+          }}
+          onClick={(e) => {
+            e.stopPropagation(); // 부모 클릭 이벤트 방지
+            handleLikeToggle(selectedPost._id);
+          }}
+        />
+        <span>{selectedPost.likes?.length || 0}</span>
+      </div>
+      <button onClick={handleClosePopup}>닫기</button>
+    </div>
+  </div>
+)}
+
 
 
     </div>

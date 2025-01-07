@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import "./deco/Home.css";
+import { FiHeart } from 'react-icons/fi';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -26,6 +27,16 @@ const Home = () => {
         }
         const data = await response.json();
         setPosts((prevPosts) => [...prevPosts, ...data.posts]);
+
+        // 초기 좋아요 상태 설정
+        const newLikes = {};
+        data.posts.forEach(post => {
+          newLikes[post._id] = post.likes.includes(localStorage.getItem('userId')); // 현재 사용자가 좋아요를 눌렀는지 확인
+        });
+        setLikes((prevLikes) => ({ ...prevLikes, ...newLikes }));
+
+
+
         if (data.posts.length === 0) {
           setHasMore(false);
         }
@@ -39,11 +50,44 @@ const Home = () => {
     fetchPosts();
   }, [page]);
 
-  const toggleLike = (postId) => {
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [postId]: !prevLikes[postId], // 좋아요 상태 토글
-    }));
+  const toggleLike = async (postId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/post/${postId}/like`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('좋아요 요청에 실패했습니다.');
+      }
+
+      const { message } = await response.json();
+      console.log(message);
+
+      setLikes((prevLikes) => ({
+        ...prevLikes,
+        [postId]: !prevLikes[postId], // 좋아요 상태 토글
+      }));
+
+      // 좋아요 상태를 posts에도 반영
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                likes: !likes[postId]
+                  ? [...post.likes, localStorage.getItem('userId')]
+                  : post.likes.filter((id) => id !== localStorage.getItem('userId')),
+              }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error('좋아요 토글 오류:', error.message);
+    }
   };
 
   const lastPostRef = useRef();
@@ -77,14 +121,14 @@ const Home = () => {
               <div className="no-image">이미지가 없습니다</div>
             )}
           </div>
-          <div className="post-content">
-            <p>{post.content}</p>
-          </div>
           <div
-            className={"like-button" + (likes[post._id] ? ' active' : '')}
+            className={ (likes[post._id] ? ' active' : '')}
             onClick={() => toggleLike(post._id)}
           >
-            ❤️
+             <FiHeart /> {post.likes.length}
+          </div>
+          <div className="post-content">
+            <p>{post.content}</p>
           </div>
         </div>
       ))}

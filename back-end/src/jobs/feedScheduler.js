@@ -43,8 +43,8 @@ const updateUserFeed = async (userId) => {
 };
 // 1분마다 실행되는 피드 업데이트 작업 (기존)
 const feedScheduler = () => {
-    schedule.scheduleJob('*/1 * * * *', async () => {
-        console.log('1분마다 피드 업데이트 시작');
+    schedule.scheduleJob('*/5 * * * *', async () => {
+        console.log('5분마다 피드 업데이트 시작');
         try {
             if (mongoose.connection.readyState !== 1) {
                 throw new Error('MongoDB not connected');
