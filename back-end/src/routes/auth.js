@@ -6,6 +6,7 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
     try {
         const { email, password } = req.body;
+        const name = email.split('@')[0];
 
         if (!email || !password) {
             return res.status(400).json({ error: '이메일과 비밀번호를 모두 입력하세요.' });
@@ -18,7 +19,7 @@ router.post('/register', async (req, res) => {
         }
 
         // 새 유저 생성
-        const newUser = new User({ email, password, profileImage: "http://localhost:3000/uploads/default.jpeg" });
+        const newUser = new User({ name, email, password, profileImage: "../uploads/677dfe51f9940999a3e9d855-1736310810147.png" });
 
         await newUser.save();
 

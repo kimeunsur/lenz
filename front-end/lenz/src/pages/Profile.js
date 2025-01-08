@@ -326,7 +326,6 @@ const Profile = () => {
         />
         <span>{selectedPost.likes?.length || 0}</span>
       </div>
-      <button onClick={handleClosePopup}>닫기</button>
     </div>
   </div>
 )}
