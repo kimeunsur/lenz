@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import "./deco/Home.css";
 import { FiHeart } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -8,6 +9,7 @@ const Home = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [likes, setLikes] = useState({}); // 좋아요 상태
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 설정
 
   const observer = useRef();
 
@@ -119,10 +121,13 @@ const Home = () => {
               src={post.userId.profileImage || '/default-profile.png'} 
               alt={`${post.userId.name}의 프로필`} 
               className="profile-image" 
+              onClick={() => navigate(`/profile/${post.userId._id}`)} // 프로필 페이지로 이동
+              style={{ cursor: 'pointer' }} // 클릭 가능 스타일
+
             />
             <span className="user-name">{post.userId.name}</span>
           </div>
-          
+
           <div className="post-image">
             {post.image ? (
               <img src={post.image} alt="Post" />
