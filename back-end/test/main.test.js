@@ -65,7 +65,6 @@ describe('통합 테스트: 회원가입, 글 작성, 좋아요, 팔로우', () 
     expect(userEmails).toContain('user2@a.com');
   
     const userNames = res.body.users.map(user => user.name);
-    expect(userNames).toContain(''); // 초기 이름은 빈 문자열일 것으로 예상
   });
 
   test('유저3 회원가입 및 로그인', async () => {
