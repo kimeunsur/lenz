@@ -289,10 +289,12 @@ const Profile = () => {
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
             />
-            <label onClick={handleUpdateName} className="custom-name-label">
-              이름 변경
-            </label>
-            <button onClick={handlePopupToggle}>닫기</button>
+            <div className='button-wrapper'>
+              <label onClick={handleUpdateName} className="custom-name-label">
+                이름 변경
+              </label>
+              <button onClick={handlePopupToggle}>닫기</button>
+            </div>
           </div>
         </div>
       )}

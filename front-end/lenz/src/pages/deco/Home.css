@@ -60,7 +60,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: 8px; /* 이모티콘과 숫자 사이 간격 추가 */
-  padding: 10px 15px;
+  padding: 10px 0;
   font-size: 16px; /* 텍스트 크기 */
   font-weight: bold; /* 텍스트 굵기 추가 */
   cursor: pointer;

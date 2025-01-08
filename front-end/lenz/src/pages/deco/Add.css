@@ -71,7 +71,7 @@
   display: inline-block;
   width: 85%;
   padding: 10%;
-  background-color: #007bff;
+  background-color: #1C1C1B;
   color: #fff;
   text-align: center;
   border-radius: 8px;
@@ -81,7 +81,7 @@
   margin: 0 auto;
 }
 .custom-file-label:hover {
-  background-color: #0056b3;
+  background-color: #1C1C1B;
 }
 
 /* 미리보기 이미지 스타일 */
@@ -109,7 +109,7 @@
 .popup button {
   width: 100%;
   padding: 10px;
-  background-color: #28a745;
+  background-color: #1C1C1B;
   color: #fff;
   font-size: 18px;
   font-weight: bold;
@@ -119,5 +119,5 @@
   transition: background-color 0.3s;
 }
 .popup button:hover {
-  background-color: #218838;
+  background-color: #1C1C1B;
 }

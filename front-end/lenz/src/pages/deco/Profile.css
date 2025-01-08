@@ -134,7 +134,14 @@ body {
   .modal-content input {
     margin-bottom: 20px;
   }
-  
+
+  .button-wrapper {
+    display: flex;
+    flex-direction: column; /* 버튼을 세로로 배치 */
+    gap: 10px; /* 버튼 간격 추가 */
+    width: 30%;
+    margin: 0 auto; /* 수평 가운데 정렬 */
+  }
   .modal-content button {
     display: inline-block;      /* 인라인 블록 또는 블록 등 필요에 맞게 설정 */
     padding: 8px 16px;         /* 버튼 안 여백 (버튼 크기 결정) */
@@ -196,6 +203,8 @@ body {
   .custom-name-label {
     display: inline-block;
     padding: 8px 16px;
+    text-align: center;
+    justify-content: center;
     background-color: black;
     color: #CE4A7E;
     border-radius: 4px;
@@ -203,11 +212,10 @@ body {
     font-size: 14px;
     transition: background-color 0.2s ease;
     text-align: center;
-    margin-left: 5%;
   }
   /* 호버 시 색상 변화 */
-  .custom-file-label:hover {
-    background-color: black;
+  .custom-file-label:active {
+    background-color: #1C1C1B;
   }
   
   /* 클릭(활성) 시 색상 변화 (선택사항) */
