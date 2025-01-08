@@ -13,11 +13,7 @@ const path = require('path');
 
 // DB 연결
 connectDB();
-console.log('feedScheduler 호출됨?');
-feedScheduler();
-console.log('feedScheduler 호출됨!');
-
-
+//feedScheduler();
 
 // 라우터 설정
 app.use('/', require('./routes/auth'));
