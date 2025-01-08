@@ -25,7 +25,6 @@ const Pin = ({ onLogout }) => {
         <h1>정말 로그아웃 하시겠습니까?</h1>
         <div className="buttons">
           <button onClick={handleLogout}>Logout</button>
-          <button className="close-btn" onClick={handleClose}>Close</button>
         </div>
       </div>
     </>

@@ -2,34 +2,43 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f0f2f5;
+
+}
+
+.pink {
+    background-color: #CE4A7E; /* 배경색을 동일하게 설정 */
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f0f2f5;
+    height: auto;
+    width: 100%;
 }
 
 .login-box {
-    background-color: #fff;
+    background-color: #1C1C1B; /* 팝업창 배경색 */
     padding: 40px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 400px;
+    color: #CE4A7E; /* 팝업창 글자색 */
 }
 
 .login-box h1 {
-    font-size: 2rem;
+    font-size: 2.5rem; /* 제목 글자 크기 조금 증가 */
     margin-bottom: 10px;
-    color: #333;
+    color: #CE4A7E; /* 제목 글자색 */
 }
 
 .login-box p {
-    color: #666;
+    color: #CE4A7E; /* 일반 텍스트 글자색 */
     margin-bottom: 30px;
 }
 
@@ -41,46 +50,79 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-size: 0.9rem;
-    color: #555;
+    font-size: 1rem; /* Label 글자 크기 조금 증가 */
+    color: #CE4A7E; /* Label 글자색 */
 }
 
+/* 이메일과 비밀번호 입력 칸 */
 .form-group input {
     width: 100%;
+    background-color: #CE4A7E; /* 입력 칸 배경색 */
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
+    border: none; /* 테두리 완전히 제거 */
+    border-radius: 4px; /* 둥근 모서리 */
+    font-size: 1.2rem; /* 입력 텍스트 크기 */
     box-sizing: border-box;
+    color: #1C1C1B; /* 입력 텍스트 색상 */
+    outline: none; /* 포커스 시 기본 테두리 제거 */
+    box-shadow: none; /* 박스 그림자 제거 */
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
+/* 입력 칸이 활성화(포커스) 되었을 때 스타일 */
+.form-group input:focus {
+    outline: none; /* 기본 포커스 스타일 제거 */
+    box-shadow: 0 0 5px #9F3B63; /* 포커스 시 강조 효과 */
 }
 
-button:hover {
-    background-color: #0056b3;
+/* Login 버튼 스타일 */
+button[type="submit"] {
+    background-color: #1C1C1B; /* Sign up 버튼 배경색 */
+    color: #CE4A7E; /* Sign up 버튼 글자색 */
+    border: none; /* 테두리 제거 */
+    border-radius: 4px; /* 둥근 모서리 */
+    font-size: 1.5rem; /* 글자 크기 */
+    padding: 15px; /* 버튼 높이 */
+    cursor: pointer; /* 포인터 커서 */
+    transition: background-color 0.3s, transform 0.2s; /* 호버 효과 */
 }
+
+/* Login 버튼 호버 효과 */
+button[type="submit"]:hover {
+    color: #fb02cd; 
+    background-color: #1C1C1B;
+    transform: scale(1.05); /* 약간 커지는 효과 */
+}
+
+
 
 .login-footer {
-    margin-top: 20px;
-    font-size: 0.9rem;
+    font-size: 1rem; /* Footer 글자 크기 증가 */
     color: #555;
 }
 
 .login-footer a {
-    color: black;
+    color: #CE4A7E;
     text-decoration: none;
 }
 
 .login-footer a:hover {
     text-decoration: underline;
+}
+
+
+
+
+.login-footer button {
+    color: #CE4A7E; /* 버튼 글자색 */
+    text-decoration: none;
+    background-color: #1C1C1B; /* 버튼 배경색 */
+    font-size: 1.5rem; /* 버튼 글자 크기 증가 */
+}
+
+.login-footer button:hover {
+    color: #fb02cd; /* 호버 시에도 동일한 글자색 */
+    text-decoration: none;
+    background-color: #1C1C1B; /* 버튼 배경색 */
+
+    transform: scale(1.05); /* 호버 시 약간 커지는 효과 */
 }

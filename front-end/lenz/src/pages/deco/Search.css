@@ -2,7 +2,7 @@
 .container {
     display: flex;
     min-height: 100vh;
-    background-color: #f9f9f9;
+    background-color: #1C1C1B;
   }
   
   /* 사이드바 */
@@ -28,18 +28,21 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    color: #CE4A7E;
+
   }
   
   .search-bar input {
+    color:#1C1C1B;
     flex: 1;
     padding: 12px 16px;
-    border: 1px solid #ddd;
+    border: 1px solid #CE4A7E;
     border-radius: 6px;
   }
   
 
   .search-bar button:hover {
-    background-color: #2d3034;
+    background-color: #1C1C1B;
   }
   
   /* 유저 리스트 */
@@ -115,20 +118,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f9f9f9;
+    margin-bottom: 30px;
   }
   
   .pagination-button {
     padding: 8px 12px; /* 버튼 크기 최소화 */
     font-size: 14px;
-    border: 1px solid #ddd;
+    border: 1px solid #CE4A7E;
     border-radius: 6px;
-    background-color: white;
+    background-color: #CE4A7E;
+    color: #1C1C1B;
     width: 100px; /* 고정된 너비 */ 
   }
   
   .pagination-info {
     margin: 0 10px;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: bold;
     white-space: nowrap;
+    color: #CE4A7E;
   }

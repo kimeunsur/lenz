@@ -6,9 +6,10 @@
     left: 0;
     height: 100vh;
     width: 80px;
-    background-color: black;
+    background-color: #1C1C1B;
     display: flex;
     flex-direction: column;
+    border: #CE4A7E;
     align-items: center;
     padding-top: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -32,20 +33,26 @@
   }
   
   .tab:hover {
-    background-color: #2d3034;
+    background-color: #5f545c;
   }
   
   .tab.active {
-    background-color: white;
+    background-color: #CE4A7E;
     color: black;
   }
-  
+  .tab.active .icon {
+    background-color: #CE4A7E;
+    color: white;
+  }
   .icon {
+    color: #CE4A7E;
     font-size: 28px;
     margin-bottom: 5px;
   }
   
   .label {
+    color: #CE4A7E;
+    font-weight: bold; /* 폰트를 굵게 변경 */
     font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
@@ -57,7 +64,8 @@
   .sidebar:hover .label {
     opacity: 1;
     transform: translateX(0);
-  }
+  }  
+
   
   @media (max-width: 768px) {
     .sidebar {

@@ -260,8 +260,8 @@ const Profile = () => {
                 </li>
               ))}
             </ul>
-            <button onClick={() => setShowFollowing(false)}>닫기</button>
           </div>
+          <button onClick={() => setShowFollowing(false)}>닫기</button>
         </div>
       )}
 
