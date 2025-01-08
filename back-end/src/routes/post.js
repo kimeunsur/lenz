@@ -79,11 +79,11 @@ router.get('/post/following', authMiddleware, async (req, res) => {
         const userId = req.user.id;
 
         const following = await Follow.find({ followerId: userId }).select('followingId');
-        console.log('Following data:', following);
+        //console.log('Following data:', following);
         const followingIds = following.map(f => f.followingId);
-        console.log('Following IDs:', followingIds);
+        //console.log('Following IDs:', followingIds);
         const posts = await Post.find({ userId: { $in: followingIds } }).sort({ createdAt: -1 }).limit(100);
-        console.log('Fetched posts:', posts);
+        //console.log('Fetched posts:', posts);
 
         res.status(200).json({ posts });
     } catch (err) {
