@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import "./deco/Home.css";
 import { FiHeart } from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -136,10 +137,15 @@ const Home = () => {
             )}
           </div>
           <div
-            className={ (likes[post._id] ? ' active' : '')}
+            className={`like-icon${likes[post._id] ? ' active' : ''}`}
             onClick={() => toggleLike(post._id)}
           >
-             <FiHeart /> {post.likes.length}
+            {likes[post._id] ? (
+              <FaHeart style={{ color: 'red', marginLeft: '15px', cursor: 'pointer' }} />
+            ) : (
+              <FiHeart style={{ marginLeft: '15px', cursor: 'pointer' }} />
+            )}
+            {post.likes.length}
           </div>
           <div className="post-content">
             <p>{post.content}</p>

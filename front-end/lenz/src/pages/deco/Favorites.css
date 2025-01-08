@@ -42,6 +42,9 @@
   margin: 0;
 }
 .like-icon {
+  margin-top: 5px;
+  gap: 10px;
+  margin-left: 5px;
   background-color: #CE4A7E; /* 기본 배경색 */
   display: flex;
   align-items: center;
@@ -58,12 +61,12 @@
 }
 
 .like-icon.active {
-  color: #CE4A7E; /* 아이콘과 텍스트 색상 유지 */
+  color: #1C1C1B; /* 아이콘과 텍스트 색상 유지 */
 
 }
 
 /* 활성화 상태일 때 호버 효과 유지 */
 .like-icon.active:hover {
-  color: #CE4A7E; /* 아이콘과 텍스트 색상 유지 */
+  color: #1C1C1B; /* 아이콘과 텍스트 색상 유지 */
 }
 

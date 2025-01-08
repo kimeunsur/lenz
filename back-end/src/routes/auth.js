@@ -19,7 +19,7 @@ router.post('/register', async (req, res) => {
         }
 
         // 새 유저 생성
-        const newUser = new User({ name, email, password, profileImage: "../uploads/677dfe51f9940999a3e9d855-1736310810147.png" });
+        const newUser = new User({ name, email, password, profileImage: "../uploads/default.jpeg" });
 
         await newUser.save();
 

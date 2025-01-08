@@ -60,7 +60,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: 8px; /* 이모티콘과 숫자 사이 간격 추가 */
-  padding: 10px 0;
+  padding: 0 0  10 0;
   font-size: 16px; /* 텍스트 크기 */
   font-weight: bold; /* 텍스트 굵기 추가 */
   cursor: pointer;
@@ -78,7 +78,9 @@
 
 /* 게시물 내용 */
 .post-content {
-  padding: 15px;
+  padding-left: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   font-size: 14px;
   color: #555;
   line-height: 1.6;
@@ -98,7 +100,7 @@
 .post-header {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin: 10px;
 }
 
 .profile-image {
