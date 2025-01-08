@@ -82,7 +82,10 @@ router.get('/post/following', authMiddleware, async (req, res) => {
         //console.log('Following data:', following);
         const followingIds = following.map(f => f.followingId);
         //console.log('Following IDs:', followingIds);
-        const posts = await Post.find({ userId: { $in: followingIds } }).sort({ createdAt: -1 }).limit(100);
+        const posts = await Post.find({ userId: { $in: followingIds } })
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .populate({path: 'userId', select: 'name profileImage'});
         //console.log('Fetched posts:', posts);
 
         res.status(200).json({ posts });
