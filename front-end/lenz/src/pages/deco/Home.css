@@ -29,6 +29,8 @@
   width: 100%;
   background-color: #f0f0f0;
   overflow-clip-margin: content-box;
+  height: auto;
+  object-fit: cover;
 }
 
 .post-image img {
@@ -52,7 +54,7 @@
 .active {
   color: red;
 }
-
+ 
 .post-card > div:nth-child(2) {
   display: flex;
   align-items: center;

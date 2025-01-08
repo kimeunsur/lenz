@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import "./deco/Favorites.css";
 import { FiHeart } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const Favorites = () => {
   const [posts, setPosts] = useState([]);
-  const [likes, setLikes] = useState({});
+  const [likes, setLikes] = useState({}); 
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 추가
   const observer = useRef();
 
   useEffect(() => {
@@ -84,13 +86,24 @@ const Favorites = () => {
     <div className="posts-page">
       {posts.map((post) => (
         <div key={post._id} className="post-card" style={{ width: '40%' }}>
+          <div className="post-header">
+            <img 
+              src={post.userId?.profileImage || '/default-profile.png'} 
+              alt={`${post.userId?.name || '알 수 없는 사용자'}의 프로필`} 
+              className="profile-image" 
+              onClick={() => post.userId && navigate(`/profile/${post.userId._id}`)} 
+              style={{ cursor: 'pointer' }}
+            />
+            <span className="user-name">{post.userId?.name || '알 수 없는 사용자'}</span>
+          </div>
+
           <div className="post-image">
             {post.image ? (
               <img src={post.image} alt="Post" />
             ) : (
               <div className="no-image">이미지가 없습니다</div>
             )}
-        </div>
+          </div>
           <div
             className={`like-icon${likes[post._id] ? ' active' : ''}`}
             onClick={() => toggleLike(post._id)}

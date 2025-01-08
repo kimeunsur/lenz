@@ -169,11 +169,12 @@ router.get('/post/recommendations', authMiddleware, async (req, res) => {
 
         // 추천 게시물 ID로 실제 Post 데이터 조회
         const postIds = recommendedPosts.map(post => post.postId); 
-        const posts = await Post.find({ _id: { $in: postIds } }).lean();
-
+        const posts = await Post.find({ _id: { $in: postIds } }).populate({ path: 'userId', select: 'name profileImage' }).lean();
+        
         // recommendationScore 추가 및 정렬
         const postsWithScores = posts.map(post => {
             const score = recommendedPosts.find(rp => rp.postId === post._id.toString()).recommendationScore;
+            const user = post.userId || { name: 'Unknown User', profileImage: '../uploads/whiskey.jpeg' };
             return { ...post, recommendationScore: score };
         }).sort((a, b) => b.recommendationScore - a.recommendationScore); // 점수 내림차순 정렬
 
