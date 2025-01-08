@@ -38,17 +38,17 @@ const Login = ({ onLogin }) => {
   const handleSignupClose = () => setIsSignupOpen(false);
 
   return (
-    <div className="login-container">
+    <div className="pink">
       <div className="login-box">
         <h1>LenZ</h1>
-        <p>이메일 계정으로 로그인</p>
+        <p>Log in with you Email account</p>
         <form onSubmit={handleLogin}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input 
               id="email"
               type="email"
-              placeholder="이메일 주소"
+              placeholder="Email Address"
               value={email}
               onChange={(e) => setemail(e.target.value)}
               required
@@ -58,17 +58,17 @@ const Login = ({ onLogin }) => {
             <label>Password</label>
             <input
               type="password"
-              placeholder="비밀번호"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button type="submit">로그인</button>
+          <button type="submit">Login</button>
         </form>
         <div className="login-footer">
-          <p>계정이 없으세요?</p>
-          <button onClick={handleSignupOpen}>회원가입</button>
+          <p>Don't you have an account?</p>
+          <button onClick={handleSignupOpen}>Sign up</button>
         </div>
         {isSignupOpen && <SignupPopup onClose={handleSignupClose} />}
       </div>

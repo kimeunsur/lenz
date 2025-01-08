@@ -24,15 +24,18 @@
 }
 
 /* 이미지 컨테이너 */
-.post-image img {
+.post-image {
+  margin: 0;
   width: 100%;
   background-color: #f0f0f0;
+  overflow-clip-margin: content-box;
   height: auto;
   object-fit: cover;
 }
 
 .post-image img {
   display: block;
+  overflow-clip-margin: content-box;
   width: 100%;
   height: auto;
 }
