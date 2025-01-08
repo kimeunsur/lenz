@@ -114,6 +114,15 @@ const Home = () => {
           ref={index === posts.length - 1 ? lastPostRef : null}
           style={{ width: '40%' }} 
         >
+          <div className="post-header">
+            <img 
+              src={post.userId.profileImage || '/default-profile.png'} 
+              alt={`${post.userId.name}의 프로필`} 
+              className="profile-image" 
+            />
+            <span className="user-name">{post.userId.name}</span>
+          </div>
+          
           <div className="post-image">
             {post.image ? (
               <img src={post.image} alt="Post" />
